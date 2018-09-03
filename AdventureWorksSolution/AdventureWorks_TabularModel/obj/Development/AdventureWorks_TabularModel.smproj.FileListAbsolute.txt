@@ -1,0 +1,7 @@
+C:\Users\e_atodosijevic\source\repos\AdventureWorksSolution\AdventureWorks_TabularModel\bin\InternetSales_Model.asdatabase
+C:\Users\e_atodosijevic\source\repos\AdventureWorksSolution\AdventureWorks_TabularModel\bin\InternetSales_Model.deploymenttargets
+C:\Users\e_atodosijevic\source\repos\AdventureWorksSolution\AdventureWorks_TabularModel\bin\InternetSales_Model.deploymentoptions
+C:\Users\e_atodosijevic\source\repos\AdventureWorksSolution\AdventureWorks_TabularModel\obj\Development\AdventureWorks_TabularModel.smproj.CoreCompileInputs.cache
+C:\Users\e_atodosijevic\source\repos\AdventureWorksSolution\AdventureWorks_TabularModel\obj\Development\InternetSales_Model.asdatabase
+C:\Users\e_atodosijevic\source\repos\AdventureWorksSolution\AdventureWorks_TabularModel\obj\Development\InternetSales_Model.deploymentoptions
+C:\Users\e_atodosijevic\source\repos\AdventureWorksSolution\AdventureWorks_TabularModel\obj\Development\InternetSales_Model.deploymenttargets
