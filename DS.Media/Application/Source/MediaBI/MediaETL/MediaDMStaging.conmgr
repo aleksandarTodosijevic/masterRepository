@@ -1,0 +1,10 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="MediaDMStaging"
+  DTS:DTSID="{477434A2-D97E-4A96-86A7-7CDA4C948D6D}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="Data Source=az-eun-wdwhv-q1.northeurope.cloudapp.azure.com;Initial Catalog=MediaDMStaging;Provider=SQLOLEDB.1;Integrated Security=SSPI;Application Name=SSIS-{477434A2-D97E-4A96-86A7-7CDA4C948D6D}SalesOnlineStaging;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

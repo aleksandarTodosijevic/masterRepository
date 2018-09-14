@@ -1,0 +1,14 @@
+﻿CREATE FUNCTION [dbo].[CreateKeyFromSourceID] (
+	@SourceID VARCHAR(MAX)
+)
+RETURNS BIGINT
+AS
+BEGIN
+	RETURN CAST(HASHBYTES('SHA1',@SourceID) AS BIGINT);
+END
+
+GO
+GRANT VIEW DEFINITION
+    ON OBJECT::[dbo].[CreateKeyFromSourceID] TO [DataServices]
+    AS [dbo];
+

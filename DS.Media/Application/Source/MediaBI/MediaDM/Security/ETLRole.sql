@@ -1,0 +1,13 @@
+﻿CREATE ROLE [ETLRole]
+    AUTHORIZATION [dbo];
+
+
+
+
+GO
+ALTER ROLE [ETLRole] ADD MEMBER [svc_dw];
+
+
+GO
+ALTER ROLE [ETLRole] ADD MEMBER [svc_bi];
+

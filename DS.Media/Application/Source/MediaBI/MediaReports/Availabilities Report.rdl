@@ -1,0 +1,2232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="MediaTabular">
+      <DataSourceReference>MediaTabular</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>97495506-b4d8-4c76-9de4-c36bd05e7dfc</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="MediaDM">
+      <DataSourceReference>MediaDM</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>874bb2a7-5c2d-4457-bbbf-8e64c2d681fa</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="AviabilitiesReport">
+      <Query>
+        <DataSourceName>MediaDM</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@FromDealRightsLicenseStart">
+            <Value>=Parameters!FromDealRightsLicenseStart.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@ToDealRightsLicenseEnd">
+            <Value>=Parameters!ToDealRightsLicenseEnd.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Property">
+            <Value>=Parameters!Property.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PropertyRights">
+            <Value>=Parameters!PropertyRights.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Territory">
+            <Value>=Parameters!Territory.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>DECLARE @LicenseStart DATE = PARSE(@FromDealRightsLicenseStart AS date USING 'en-US')
+DECLARE @dateTo DATE = 
+CASE 
+	WHEN (@ToDealRightsLicenseEnd = '' OR @ToDealRightsLicenseEnd IS NULL  ) THEN '9999-12-31' 
+	ELSE PARSE(@ToDealRightsLicenseEnd AS date USING 'en-US')
+END
+
+
+SELECT 
+	MIN([License Start]) OVER () AS [License Start Min]
+	,MAX([License End]) OVER () AS [License End Max]
+	,DATEDIFF(DAY, 0 , [License Start]) AS [License Start Int]
+	,COUNT(*) OVER() AS CountOfItems
+	,ROW_NUMBER() OVER (ORDER BY [Property Name], [Rights Selection], [Is Deal Rights], [License Start]) AS SortingKey
+	,CASE WHEN LEN([Property Name]) &gt; 50 THEN
+			SUBSTRING([Property Name], 0, 50) + ' ...'
+		ELSE 
+			SUBSTRING([Property Name], 0, 50)
+	END AS [Property Name Short]
+	,CASE WHEN LEN([Rights Selection]) &gt; 50 THEN
+			SUBSTRING([Rights Selection], 0, 50) + ' ...'
+		ELSE 
+			SUBSTRING([Rights Selection], 0, 50)
+	END AS [Rights Selection Short]
+	,CASE WHEN LEN([Deal Property Name]) &gt; 50 THEN
+			SUBSTRING([Deal Property Name], 0, 50) + ' ...'
+		ELSE 
+			SUBSTRING([Deal Property Name], 0, 50)
+	END AS [Deal Property Name Short]
+	,t.[Customer Short Name]
+	,t.GroupingKey
+	,t.[Is Deal Rights]
+	,t.[Language Description]
+	,t.[Number of Transmissions]
+	,t.[License Start]
+	,t.[License End]
+	,t.[Rights Selection]
+	,t.[Deal Property Name]
+,[Property Name]
+	,t.CountRights
+FROM
+(
+	--- Properties
+	SELECT 
+		MIN(dr.[License Start]) AS [License Start]
+		,MAX(dr.[License End]) AS [License End]
+		,' ' AS [Customer Short Name]
+		,p.[Property Name] 
+		,pr.[Rights Selection]
+		,'' AS [Deal Property Name] 
+		,CAST(HASHBYTES('SHA1',p.[Property Name] + pr.[Rights Selection]) AS BIGINT) AS [GroupingKey]
+		,'' AS [Language Description]
+		,0 AS [License Duration]
+		,0 AS [Number of Transmissions]
+		,COUNT(r.[Deal Rights Key]) AS CountRights 
+		,p.[Property Key] AS PropertyId
+		,0 AS [Is Deal Rights]
+	FROM [dbo].[Deal Rights] dr
+	INNER JOIN [dbo].[Rights] r ON dr.[Deal Rights Key] = r.[Deal Rights Key]
+	INNER JOIN [dbo].[Property] p ON r.[Property Key] = p.[Property Key]
+	INNER JOIN [dbo].[Customer Contact] cc ON r.[Customer Contact Key] = cc.[Customer Contact Key]
+	INNER JOIN [dbo].[Property Rights] pr ON r.[Property Rights Key] = pr.[Property Rights Key]
+	WHERE 0=0
+		AND p.[Property Key] IN (@Property)
+		AND dr.[License Start] BETWEEN @LicenseStart AND @dateTo
+		AND (pr.[Property Rights Key] IN (@PropertyRights) OR  (NULL IN (@PropertyRights)))
+		AND (dr.[Territory Description] IN (@Territory) OR (NULL IN (@Territory)))
+	GROUP BY  
+		p.[Property Key],
+		p.[Property Name],
+		pr.[Rights Selection]
+
+	UNION ALL
+
+	-- deal rights
+	SELECT 
+		dr.[License Start]
+		,dr.[License End]
+		,cc.[Customer Short Name]
+		,p.[Property Name]
+		,pr.[Rights Selection]  
+		,dr.[Deal Rights Description] AS [Deal Property Name] 
+		,CAST(HASHBYTES('SHA1',dr.[Territory Description] + pr.[Rights Selection] + [Deal Rights Description]) AS BIGINT) AS [GroupingKey]
+		,dr.[Language Description]
+		,dr.[License Duration]
+		,dr.[Number of Transmissions]
+		,COUNT(r.[Deal Rights Key]) AS CountRights 
+		,p.[Property Key] AS PropertyId
+		,1 AS [Is Deal Rights]
+	FROM [dbo].[Deal Rights] dr
+	INNER JOIN [dbo].[Rights] r ON dr.[Deal Rights Key] = r.[Deal Rights Key]
+	INNER JOIN [dbo].[Property] p ON r.[Property Key] = p.[Property Key]
+	INNER JOIN [dbo].[Customer Contact] cc ON r.[Customer Contact Key] = cc.[Customer Contact Key]
+	INNER JOIN [dbo].[Property Rights] pr ON r.[Property Rights Key] = pr.[Property Rights Key]
+	WHERE 0=0
+		AND p.[Property Key] IN (@Property)
+		AND dr.[License Start] BETWEEN @LicenseStart AND @dateTo
+		AND (pr.[Property Rights Key] IN (@PropertyRights) OR  (NULL IN (@PropertyRights)))
+		AND (dr.[Territory Description] IN (@Territory) OR (NULL IN (@Territory)))
+	GROUP BY  
+		p.[Property Key],
+		p.[Property Name],
+		pr.[Rights Selection],
+		dr.[License Start],
+		dr.[License End],
+		cc.[Customer Short Name], 
+		dr.[Deal Rights Description], 
+		dr.[Territory Description],
+		dr.[Language Description],
+		dr.[License Duration], 
+		dr.[Number of Transmissions]
+) AS t</CommandText>
+        <rd:DesignerState>
+          <QueryDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/AnalysisServices/QueryDefinition">
+            <CommandType>MDX</CommandType>
+            <QuerySpecification xsi:type="MDXQuerySpecification">
+              <Select>
+                <Items>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Deal Rights</DimensionName>
+                      <HierarchyName>License Start</HierarchyName>
+                      <HierarchyUniqueName>[Deal Rights].[License Start]</HierarchyUniqueName>
+                      <LevelName>License Start</LevelName>
+                      <UniqueName>[Deal Rights].[License Start].[License Start]</UniqueName>
+                    </ID>
+                    <ItemCaption>License Start</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Deal Rights</DimensionName>
+                      <HierarchyName>License Start Int</HierarchyName>
+                      <HierarchyUniqueName>[Deal Rights].[License Start Int]</HierarchyUniqueName>
+                      <LevelName>License Start Int</LevelName>
+                      <UniqueName>[Deal Rights].[License Start Int].[License Start Int]</UniqueName>
+                    </ID>
+                    <ItemCaption>License Start Int</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Property</DimensionName>
+                      <HierarchyName>Property Name</HierarchyName>
+                      <HierarchyUniqueName>[Property].[Property Name]</HierarchyUniqueName>
+                      <LevelName>Property Name</LevelName>
+                      <UniqueName>[Property].[Property Name].[Property Name]</UniqueName>
+                    </ID>
+                    <ItemCaption>Property Name</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Customer Contact</DimensionName>
+                      <HierarchyName>Customer Short Name</HierarchyName>
+                      <HierarchyUniqueName>[Customer Contact].[Customer Short Name]</HierarchyUniqueName>
+                      <LevelName>Customer Short Name</LevelName>
+                      <UniqueName>[Customer Contact].[Customer Short Name].[Customer Short Name]</UniqueName>
+                    </ID>
+                    <ItemCaption>Customer Short Name</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Deal Rights</DimensionName>
+                      <HierarchyName>Territory Description</HierarchyName>
+                      <HierarchyUniqueName>[Deal Rights].[Territory Description]</HierarchyUniqueName>
+                      <LevelName>Territory Description</LevelName>
+                      <UniqueName>[Deal Rights].[Territory Description].[Territory Description]</UniqueName>
+                    </ID>
+                    <ItemCaption>Territory Description</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Deal Rights</DimensionName>
+                      <HierarchyName>Deal Rights Description</HierarchyName>
+                      <HierarchyUniqueName>[Deal Rights].[Deal Rights Description]</HierarchyUniqueName>
+                      <LevelName>Deal Rights Description</LevelName>
+                      <UniqueName>[Deal Rights].[Deal Rights Description].[Deal Rights Description]</UniqueName>
+                    </ID>
+                    <ItemCaption>Deal Rights Description</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Deal Rights</DimensionName>
+                      <HierarchyName>Language Description</HierarchyName>
+                      <HierarchyUniqueName>[Deal Rights].[Language Description]</HierarchyUniqueName>
+                      <LevelName>Language Description</LevelName>
+                      <UniqueName>[Deal Rights].[Language Description].[Language Description]</UniqueName>
+                    </ID>
+                    <ItemCaption>Language Description</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>License Start Date</DimensionName>
+                      <HierarchyName>Date (License Start Date)</HierarchyName>
+                      <HierarchyUniqueName>[License Start Date].[Date (License Start Date)]</HierarchyUniqueName>
+                      <LevelName>Date (License Start Date)</LevelName>
+                      <UniqueName>[License Start Date].[Date (License Start Date)].[Date (License Start Date)]</UniqueName>
+                    </ID>
+                    <ItemCaption>Date (License Start Date)</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>License End Date</DimensionName>
+                      <HierarchyName>Date (License End Date)</HierarchyName>
+                      <HierarchyUniqueName>[License End Date].[Date (License End Date)]</HierarchyUniqueName>
+                      <LevelName>Date (License End Date)</LevelName>
+                      <UniqueName>[License End Date].[Date (License End Date)].[Date (License End Date)]</UniqueName>
+                    </ID>
+                    <ItemCaption>Date (License End Date)</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Deal Rights</DimensionName>
+                      <HierarchyName>License Duration</HierarchyName>
+                      <HierarchyUniqueName>[Deal Rights].[License Duration]</HierarchyUniqueName>
+                      <LevelName>License Duration</LevelName>
+                      <UniqueName>[Deal Rights].[License Duration].[License Duration]</UniqueName>
+                    </ID>
+                    <ItemCaption>License Duration</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Level">
+                      <DimensionName>Deal Rights</DimensionName>
+                      <HierarchyName>Number of Transmissions</HierarchyName>
+                      <HierarchyUniqueName>[Deal Rights].[Number of Transmissions]</HierarchyUniqueName>
+                      <LevelName>Number of Transmissions</LevelName>
+                      <UniqueName>[Deal Rights].[Number of Transmissions].[Number of Transmissions]</UniqueName>
+                    </ID>
+                    <ItemCaption>Number of Transmissions</ItemCaption>
+                    <UniqueName>true</UniqueName>
+                  </Item>
+                  <Item>
+                    <ID xsi:type="Measure">
+                      <MeasureName>Rights Count</MeasureName>
+                      <UniqueName>[Measures].[Rights Count]</UniqueName>
+                    </ID>
+                    <ItemCaption>Rights Count</ItemCaption>
+                    <BackColor>true</BackColor>
+                    <ForeColor>true</ForeColor>
+                    <FontFamily>true</FontFamily>
+                    <FontSize>true</FontSize>
+                    <FontWeight>true</FontWeight>
+                    <FontStyle>true</FontStyle>
+                    <FontDecoration>true</FontDecoration>
+                    <FormattedValue>true</FormattedValue>
+                    <FormatString>true</FormatString>
+                  </Item>
+                </Items>
+              </Select>
+              <From>Model</From>
+              <Filter>
+                <FilterItems>
+                  <FilterItem>
+                    <HierarchyUniqueName>[Property].[Property Name]</HierarchyUniqueName>
+                    <Condition xsi:type="Contains">
+                      <Basis>Caption</Basis>
+                      <Expression>THE NIGHT MANAGER</Expression>
+                      <Parametrized>true</Parametrized>
+                    </Condition>
+                  </FilterItem>
+                  <FilterItem>
+                    <HierarchyUniqueName>[Deal Rights].[Territory Description]</HierarchyUniqueName>
+                    <Condition xsi:type="Contains">
+                      <Basis>Caption</Basis>
+                      <Expression>Luxembourg</Expression>
+                      <Parametrized>true</Parametrized>
+                    </Condition>
+                  </FilterItem>
+                  <FilterItem>
+                    <HierarchyUniqueName>[Deal Rights].[License Start]</HierarchyUniqueName>
+                    <Condition xsi:type="Range">
+                      <Basis>Member</Basis>
+                      <From>[Deal Rights].[License Start].&amp;[2016-02-25T00:00:00]</From>
+                      <FromParametrized>true</FromParametrized>
+                      <To>[Deal Rights].[License Start].&amp;[2070-01-01T00:00:00]</To>
+                    </Condition>
+                  </FilterItem>
+                </FilterItems>
+              </Filter>
+              <Calculations />
+              <Aggregates />
+              <QueryProperties>
+                <IncludeMemberValue>true</IncludeMemberValue>
+              </QueryProperties>
+            </QuerySpecification>
+          </QueryDefinition>
+        </rd:DesignerState>
+      </Query>
+      <Fields>
+        <Field Name="License_Start_Min">
+          <DataField>License Start Min</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="License_End_Max">
+          <DataField>License End Max</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="License_Start">
+          <DataField>License Start</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Property_Name_Short">
+          <DataField>Property Name Short</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SortingKey">
+          <DataField>SortingKey</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="CountOfItems">
+          <DataField>CountOfItems</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Rights_Selection_Short">
+          <DataField>Rights Selection Short</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="License_End">
+          <DataField>License End</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="License_Start_Int">
+          <DataField>License Start Int</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Deal_Property_Name_Short">
+          <DataField>Deal Property Name Short</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GroupingKey">
+          <DataField>GroupingKey</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="Customer_Short_Name">
+          <DataField>Customer Short Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Language_Description">
+          <DataField>Language Description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Rights_Selection">
+          <DataField>Rights Selection</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Deal_Property_Name">
+          <DataField>Deal Property Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Number_of_Transmissions">
+          <DataField>Number of Transmissions</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Property_Name">
+          <DataField>Property Name</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="License_End_Date_Cut">
+          <Value>=IIF(DATEADD(DateInterval.Year, Parameters!AddYearsToCutDates.Value, Fields!License_Start_Min.Value) &lt;= Fields!License_End.Value, DATEADD(DateInterval.Year, Parameters!AddYearsToCutDates.Value, Fields!License_Start_Min.Value), Fields!License_End.Value)</Value>
+        </Field>
+        <Field Name="CountRights">
+          <DataField>CountRights</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Is_Deal_Rights">
+          <DataField>Is Deal Rights</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Language_Descrition_Short">
+          <Value>=Replace(Replace(Fields!Language_Description.Value ,"All Languages","All"),"excluding","ex.")</Value>
+        </Field>
+        <Field Name="Temp_Start_Date">
+          <Value>=CDate("01/01/2017")</Value>
+        </Field>
+        <Field Name="Temp_End_Date">
+          <Value>=CDate("12/12/2017")</Value>
+        </Field>
+        <Field Name="StartPoint">
+          <Value>=Fields!License_Start_Int.Value</Value>
+        </Field>
+        <Field Name="EndPoint">
+          <Value>=DateDiff(DateInterval.Day,CDATE("12/31/1899"),Fields!License_End_Date_Cut.Value)</Value>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="PropertyName">
+      <Query>
+        <DataSourceName>MediaDM</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@PropertyNameContains">
+            <Value>=Parameters!PropertyNameContains.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Standard_Header_Properties">
+            <Value>=Parameters!Standard_Header_Properties.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT
+[Property Key]
+,[Property Name]
+,[Short Name (Property)] AS [Short Name]
+FROM [dbo].[Property] p
+WHERE 
+(UPPER([Property Name]) like UPPER('%' + @PropertyNameContains + '%') OR @PropertyNameContains IS NULL)
+AND (([Property Category]  IN ('Standard', 'Series Header')  AND @Standard_Header_Properties = 1) OR (@Standard_Header_Properties = 0))</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Property_Key">
+          <DataField>Property Key</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="Property_Name">
+          <DataField>Property Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Short_Name">
+          <DataField>Short Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="PropertyRights">
+      <Query>
+        <DataSourceName>MediaDM</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@FromDealRightsLicenseStart">
+            <Value>=Parameters!FromDealRightsLicenseStart.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@ToDealRightsLicenseEnd">
+            <Value>=Parameters!ToDealRightsLicenseEnd.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Property">
+            <Value>=Parameters!Property.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>DECLARE @LicenseStart DATE = PARSE(@FromDealRightsLicenseStart AS date USING 'en-US')
+DECLARE @dateTo DATE = 
+CASE 
+	WHEN (@ToDealRightsLicenseEnd = '' OR @ToDealRightsLicenseEnd IS NULL  ) THEN '9999-12-31' 
+	ELSE PARSE(@ToDealRightsLicenseEnd AS date USING 'en-US')
+END
+SELECT 
+		p.[Property Name] 
+		,pr.[Rights Selection]
+		,pr.[Property Rights Key]
+		,COUNT(dr.[Deal Rights Key]) AS CountRights
+	FROM [dbo].[Deal Rights] dr
+	INNER JOIN [dbo].[Rights] r ON dr.[Deal Rights Key] = r.[Deal Rights Key]
+	INNER JOIN [dbo].[Property] p ON r.[Property Key] = p.[Property Key]
+	INNER JOIN [dbo].[Customer Contact] cc ON r.[Customer Contact Key] = cc.[Customer Contact Key]
+	INNER JOIN [dbo].[Property Rights] pr ON r.[Property Rights Key] = pr.[Property Rights Key]
+	WHERE 0=0
+		AND p.[Property Key] IN (@Property)
+		AND dr.[License Start] between @LicenseStart AND @dateTo
+	GROUP BY 		p.[Property Name] 
+		,pr.[Rights Selection]
+		,pr.[Property Rights Key]</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Property_Name">
+          <DataField>Property Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Rights_Selection">
+          <DataField>Rights Selection</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Property_Rights_Key">
+          <DataField>Property Rights Key</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="CountRights">
+          <DataField>CountRights</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Territory">
+      <Query>
+        <DataSourceName>MediaDM</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@DealRightsTerritoryDescription">
+            <Value>=Parameters!DealRightsTerritoryDescription.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@FromDealRightsLicenseStart">
+            <Value>=Parameters!FromDealRightsLicenseStart.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@ToDealRightsLicenseEnd">
+            <Value>=Parameters!ToDealRightsLicenseEnd.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Property">
+            <Value>=Parameters!Property.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PropertyRights">
+            <Value>=Parameters!PropertyRights.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>declare @territory varchar(100) = @DealRightsTerritoryDescription
+
+DECLARE @LicenseStart DATE = PARSE(@FromDealRightsLicenseStart AS date USING 'en-US')
+DECLARE @dateTo DATE = 
+CASE 
+	WHEN (@ToDealRightsLicenseEnd = '' OR @ToDealRightsLicenseEnd IS NULL  ) THEN '9999-12-31' 
+	ELSE PARSE(@ToDealRightsLicenseEnd AS date USING 'en-US')
+END
+
+
+SELECT 
+	Distinct [Territory Description] AS [TerritoryDescription]
+FROM [dbo].[Deal Rights] dr
+	INNER JOIN [dbo].[Rights] r ON dr.[Deal Rights Key] = r.[Deal Rights Key]
+	INNER JOIN [dbo].[Property] p ON r.[Property Key] = p.[Property Key]
+	INNER JOIN [dbo].[Customer Contact] cc ON r.[Customer Contact Key] = cc.[Customer Contact Key]
+	INNER JOIN [dbo].[Property Rights] pr ON r.[Property Rights Key] = pr.[Property Rights Key]
+WHERE 
+	p.[Property Key] IN (@Property)
+	AND dr.[License Start] between @LicenseStart AND @dateTo
+	AND (pr.[Property Rights Key] IN (@PropertyRights) OR  (NULL IN (@PropertyRights)))
+	AND (UPPER([Territory Description]) like UPPER('%' + @territory +'%') OR (@territory IS NULL))</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="TerritoryDescription">
+          <DataField>TerritoryDescription</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="textbox1">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Availabilities Report</Value>
+                    <Style>
+                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontSize>24pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>textbox1</rd:DefaultName>
+            <Height>0.50292in</Height>
+            <Width>3.27083in</Width>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Chart Name="Chart1">
+            <ChartCategoryHierarchy>
+              <ChartMembers>
+                <ChartMember>
+                  <Group Name="Chart1_CategoryGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!GroupingKey.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!SortingKey.Value</Value>
+                      <Direction>Descending</Direction>
+                    </SortExpression>
+                  </SortExpressions>
+                  <Label>=Fields!GroupingKey.Value</Label>
+                </ChartMember>
+              </ChartMembers>
+            </ChartCategoryHierarchy>
+            <ChartSeriesHierarchy>
+              <ChartMembers>
+                <ChartMember>
+                  <Group Name="Chart1_SeriesGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!StartPoint.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!StartPoint.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <Label>=Fields!StartPoint.Value</Label>
+                </ChartMember>
+              </ChartMembers>
+            </ChartSeriesHierarchy>
+            <ChartData>
+              <ChartSeriesCollection>
+                <ChartSeries Name="Date__License_Start_Date_">
+                  <ChartDataPoints>
+                    <ChartDataPoint>
+                      <ChartDataPointValues>
+                        <High>=Fields!EndPoint.Value</High>
+                        <Low>=Fields!StartPoint.Value</Low>
+                      </ChartDataPointValues>
+                      <ChartDataLabel>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                          <Color>=Switch(
+	Fields!Number_of_Transmissions.Value = -5, "White",
+	Fields!Is_Deal_Rights.Value = 0, "White",
+	true, "Black"
+)</Color>
+                        </Style>
+                        <Label>=
+SWITCH(
+	Fields!Is_Deal_Rights.Value = 0,
+	Fields!Property_Name_Short.Value  + " " + Fields!Rights_Selection_Short.Value,
+	Fields!Is_Deal_Rights.Value = 1,
+	IIF(
+		LEN(Fields!Customer_Short_Name.Value + ", " + Fields!Deal_Property_Name_Short.Value + ", (" + Fields!Language_Descrition_Short.Value + ")") &gt; ((Fields!EndPoint.Value - Fields!StartPoint.Value)/10),
+		Left(Fields!Customer_Short_Name.Value + ", " + Fields!Deal_Property_Name_Short.Value + ", (" + Fields!Language_Descrition_Short.Value + ")"	,((Fields!EndPoint.Value - Fields!StartPoint.Value)/10)
+			) + " ...",
+		Fields!Customer_Short_Name.Value + ", " + Fields!Deal_Property_Name_Short.Value + ", (" + Fields!Language_Descrition_Short.Value + ")"
+	)
+)</Label>
+                        <Visible>true</Visible>
+                      </ChartDataLabel>
+                      <ToolTip>=SWITCH(Fields!Is_Deal_Rights.Value = 0,
+Fields!Property_Name.Value  + " " + Fields!Rights_Selection.Value + "  License from " + Fields!License_Start.Value + " to " + Fields!License_End.Value,
+Fields!Is_Deal_Rights.Value = 1,
+Fields!Customer_Short_Name.Value + ", " + Fields!Deal_Property_Name_Short.Value + ", (" + Fields!Language_Descrition_Short.Value + ")" + "  License from " + Fields!License_Start.Value + " to " + Fields!License_End.Value
+)</ToolTip>
+                      <Style>
+                        <Color>=Switch(
+	Fields!Number_of_Transmissions.Value = -3, "#FFC200", 
+	Fields!Number_of_Transmissions.Value = -5, "Black",
+	Fields!Is_Deal_Rights.Value = 1, "LightGrey",
+	true, "DarkSeaGreen"
+	)</Color>
+                      </Style>
+                      <ChartMarker>
+                        <Style />
+                      </ChartMarker>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </ChartDataPoint>
+                  </ChartDataPoints>
+                  <Type>Range</Type>
+                  <Subtype>Bar</Subtype>
+                  <Style />
+                  <ChartEmptyPoints>
+                    <Style />
+                    <ChartMarker>
+                      <Style />
+                    </ChartMarker>
+                    <ChartDataLabel>
+                      <Style />
+                    </ChartDataLabel>
+                  </ChartEmptyPoints>
+                  <CustomProperties>
+                    <CustomProperty>
+                      <Name>DrawSideBySide</Name>
+                      <Value>False</Value>
+                    </CustomProperty>
+                    <CustomProperty>
+                      <Name>BarLabelStyle</Name>
+                      <Value>Right</Value>
+                    </CustomProperty>
+                  </CustomProperties>
+                  <ChartAreaName>Default</ChartAreaName>
+                  <ValueAxisName>Primary</ValueAxisName>
+                  <CategoryAxisName>Primary</CategoryAxisName>
+                  <ChartSmartLabel>
+                    <CalloutLineColor>Black</CalloutLineColor>
+                    <MinMovingDistance>0pt</MinMovingDistance>
+                  </ChartSmartLabel>
+                </ChartSeries>
+              </ChartSeriesCollection>
+            </ChartData>
+            <ChartAreas>
+              <ChartArea Name="Default">
+                <ChartCategoryAxes>
+                  <ChartAxis Name="Primary">
+                    <Visible>False</Visible>
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                  <ChartAxis Name="Secondary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Location>Opposite</Location>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                </ChartCategoryAxes>
+                <ChartValueAxes>
+                  <ChartAxis Name="Primary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <Interval>2</Interval>
+                    <IntervalType>Months</IntervalType>
+                    <ChartMajorGridLines>
+                      <Enabled>=3 &gt; 2</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Minimum>=First(Fields!License_Start_Min.Value, "AviabilitiesReport")</Minimum>
+                    <Maximum>=DATEADD(DateInterval.Year, Parameters!AddYearsToCutDates.Value, Fields!License_Start_Min.Value)</Maximum>
+                    <HideLabels>true</HideLabels>
+                    <IncludeZero>false</IncludeZero>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                  <ChartAxis Name="Secondary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Location>Opposite</Location>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                </ChartValueAxes>
+                <Style>
+                  <BackgroundColor>#00ffffff</BackgroundColor>
+                  <BackgroundGradientType>None</BackgroundGradientType>
+                </Style>
+                <ChartElementPosition>
+                  <Height>100</Height>
+                  <Width>100</Width>
+                </ChartElementPosition>
+                <ChartInnerPlotPosition>
+                  <Left>2</Left>
+                  <Height>100</Height>
+                  <Width>98</Width>
+                </ChartInnerPlotPosition>
+              </ChartArea>
+            </ChartAreas>
+            <DynamicHeight>=Switch(ReportItems("HiddenTextBox").Value&lt;=1,"1.5 in",
+ReportItems("HiddenTextBox").Value=2, "1.8 in",
+ReportItems("HiddenTextBox").Value=3, "2.2 in",
+ReportItems("HiddenTextBox").Value=4, "2.5 in",
+ReportItems("HiddenTextBox").Value=5, "3 in",
+ReportItems("HiddenTextBox").Value&gt;5,(ReportItems("HiddenTextBox").Value - (ReportItems("HiddenTextBox").Value/1.8)) &amp;" in"
+)</DynamicHeight>
+            <ChartBorderSkin>
+              <Style>
+                <BackgroundColor>Gray</BackgroundColor>
+                <BackgroundGradientType>None</BackgroundGradientType>
+                <Color>White</Color>
+              </Style>
+            </ChartBorderSkin>
+            <ChartNoDataMessage Name="NoDataMessage">
+              <Caption>No Data Available</Caption>
+              <Style>
+                <BackgroundGradientType>None</BackgroundGradientType>
+                <FontWeight>Bold</FontWeight>
+                <TextAlign>General</TextAlign>
+                <VerticalAlign>Top</VerticalAlign>
+              </Style>
+            </ChartNoDataMessage>
+            <DataSetName>AviabilitiesReport</DataSetName>
+            <Top>1.06472in</Top>
+            <Left>0.78819in</Left>
+            <Height>4in</Height>
+            <Width>11.26041in</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>White</BackgroundColor>
+              <BackgroundGradientType>None</BackgroundGradientType>
+            </Style>
+            <cl:ComponentMetadata>
+              <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+            </cl:ComponentMetadata>
+          </Chart>
+          <Chart Name="Chart2">
+            <ChartCategoryHierarchy>
+              <ChartMembers>
+                <ChartMember>
+                  <Group Name="Chart2_CategoryGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!GroupingKey.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!SortingKey.Value</Value>
+                      <Direction>Descending</Direction>
+                    </SortExpression>
+                  </SortExpressions>
+                  <Label>=Fields!GroupingKey.Value</Label>
+                </ChartMember>
+              </ChartMembers>
+            </ChartCategoryHierarchy>
+            <ChartSeriesHierarchy>
+              <ChartMembers>
+                <ChartMember>
+                  <Group Name="Chart2_SeriesGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!Temp_Start_Date.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!Temp_Start_Date.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <Label>=Fields!Temp_Start_Date.Value</Label>
+                </ChartMember>
+              </ChartMembers>
+            </ChartSeriesHierarchy>
+            <ChartData>
+              <ChartSeriesCollection>
+                <ChartSeries Name="Date__License_Start_Date_">
+                  <ChartDataPoints>
+                    <ChartDataPoint>
+                      <ChartDataPointValues>
+                        <High>=Fields!Temp_End_Date.Value</High>
+                        <Low>=Fields!Temp_Start_Date.Value</Low>
+                      </ChartDataPointValues>
+                      <ChartDataLabel>
+                        <Style>
+                          <Border>
+                            <Width>1.5pt</Width>
+                          </Border>
+                          <FontSize>8pt</FontSize>
+                          <Color>=IIF(Fields!License_End.Value &gt; Fields!License_End_Date_Cut.Value, "Black", "White")</Color>
+                        </Style>
+                        <Label>= "License end " + FormatDateTime(Fields!License_End.Value,DateFormat.ShortDate)</Label>
+                        <Visible>true</Visible>
+                      </ChartDataLabel>
+                      <ToolTip>="License from " + Fields!License_Start.Value + " to " + Fields!License_End.Value</ToolTip>
+                      <Style>
+                        <Border>
+                          <Color>=Switch(
+	Fields!Number_of_Transmissions.Value = -3, "#FFC200", 
+	Fields!Number_of_Transmissions.Value = -5, "Black",
+	true, "DarkSeaGreen"
+	)</Color>
+                          <Style>=IIF(Fields!License_End.Value &gt; Fields!License_End_Date_Cut.Value, "Dotted", "None")</Style>
+                        </Border>
+                        <Color>#00ffffff</Color>
+                      </Style>
+                      <ChartMarker>
+                        <Style />
+                      </ChartMarker>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </ChartDataPoint>
+                  </ChartDataPoints>
+                  <Type>Range</Type>
+                  <Subtype>Bar</Subtype>
+                  <Style />
+                  <ChartEmptyPoints>
+                    <Style />
+                    <ChartMarker>
+                      <Style />
+                    </ChartMarker>
+                    <ChartDataLabel>
+                      <Style />
+                    </ChartDataLabel>
+                  </ChartEmptyPoints>
+                  <CustomProperties>
+                    <CustomProperty>
+                      <Name>DrawSideBySide</Name>
+                      <Value>False</Value>
+                    </CustomProperty>
+                  </CustomProperties>
+                  <ChartAreaName>Default</ChartAreaName>
+                  <ValueAxisName>Primary</ValueAxisName>
+                  <CategoryAxisName>Primary</CategoryAxisName>
+                  <ChartSmartLabel>
+                    <CalloutLineColor>Black</CalloutLineColor>
+                    <MinMovingDistance>0pt</MinMovingDistance>
+                  </ChartSmartLabel>
+                </ChartSeries>
+              </ChartSeriesCollection>
+            </ChartData>
+            <ChartAreas>
+              <ChartArea Name="Default">
+                <ChartCategoryAxes>
+                  <ChartAxis Name="Primary">
+                    <Visible>False</Visible>
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                  <ChartAxis Name="Secondary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Location>Opposite</Location>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                </ChartCategoryAxes>
+                <ChartValueAxes>
+                  <ChartAxis Name="Primary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <Interval>1</Interval>
+                    <IntervalType>Years</IntervalType>
+                    <ChartMajorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <HideLabels>true</HideLabels>
+                    <IncludeZero>false</IncludeZero>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                  <ChartAxis Name="Secondary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Location>Opposite</Location>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                </ChartValueAxes>
+                <Style>
+                  <BackgroundColor>#00ffffff</BackgroundColor>
+                  <BackgroundGradientType>None</BackgroundGradientType>
+                </Style>
+                <ChartElementPosition>
+                  <Left>3</Left>
+                  <Height>100</Height>
+                  <Width>100</Width>
+                </ChartElementPosition>
+                <ChartInnerPlotPosition>
+                  <Left>1.117</Left>
+                  <Height>100</Height>
+                  <Width>100</Width>
+                </ChartInnerPlotPosition>
+              </ChartArea>
+            </ChartAreas>
+            <DynamicHeight>=Switch(ReportItems("HiddenTextBox").Value&lt;=1,"1.5 in",
+ReportItems("HiddenTextBox").Value=2, "1.8 in",
+ReportItems("HiddenTextBox").Value=3, "2.2 in",
+ReportItems("HiddenTextBox").Value=4, "2.5 in",
+ReportItems("HiddenTextBox").Value=5, "3 in",
+ReportItems("HiddenTextBox").Value&gt;5,(ReportItems("HiddenTextBox").Value - (ReportItems("HiddenTextBox").Value/1.8)) &amp;" in"
+)</DynamicHeight>
+            <ChartBorderSkin>
+              <Style>
+                <BackgroundColor>Gray</BackgroundColor>
+                <BackgroundGradientType>None</BackgroundGradientType>
+                <Color>White</Color>
+              </Style>
+            </ChartBorderSkin>
+            <ChartNoDataMessage Name="NoDataMessage">
+              <Caption>No Data Available</Caption>
+              <Style>
+                <BackgroundGradientType>None</BackgroundGradientType>
+                <FontWeight>Bold</FontWeight>
+                <TextAlign>General</TextAlign>
+                <VerticalAlign>Top</VerticalAlign>
+              </Style>
+            </ChartNoDataMessage>
+            <DataSetName>AviabilitiesReport</DataSetName>
+            <Top>1.06472in</Top>
+            <Left>12.10416in</Left>
+            <Height>4.04167in</Height>
+            <Width>1.17535in</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>White</BackgroundColor>
+              <BackgroundGradientType>None</BackgroundGradientType>
+            </Style>
+            <cl:ComponentMetadata>
+              <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+            </cl:ComponentMetadata>
+          </Chart>
+          <Textbox Name="Textbox3">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Label>Filter values</Label>
+                    <Value>=Parameters!DealRightsTerritoryDescription.Value + " " + Parameters!Property.Label(0)</Value>
+                    <Style>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox3</rd:DefaultName>
+            <Top>0.22167in</Top>
+            <Left>3.32639in</Left>
+            <Height>0.28125in</Height>
+            <Width>6.63069in</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Chart Name="Chart3">
+            <ChartCategoryHierarchy>
+              <ChartMembers>
+                <ChartMember>
+                  <Group Name="ChartGroup3" />
+                  <Label />
+                </ChartMember>
+              </ChartMembers>
+            </ChartCategoryHierarchy>
+            <ChartSeriesHierarchy>
+              <ChartMembers>
+                <ChartMember>
+                  <Label>End Point</Label>
+                </ChartMember>
+              </ChartMembers>
+            </ChartSeriesHierarchy>
+            <ChartData>
+              <ChartSeriesCollection>
+                <ChartSeries Name="Date__License_Start_Date_">
+                  <ChartDataPoints>
+                    <ChartDataPoint>
+                      <ChartDataPointValues>
+                        <High>=Fields!EndPoint.Value</High>
+                        <Low>=Fields!StartPoint.Value</Low>
+                      </ChartDataPointValues>
+                      <ChartDataLabel>
+                        <Style />
+                        <Label>=Fields!Property_Name.Value  + Fields!Customer_Short_Name.Value +  " (" + Fields!Language_Descrition_Short.Value + ")"</Label>
+                      </ChartDataLabel>
+                      <ToolTip>="License from " + Fields!License_Start.Value + " to " + Fields!License_End.Value</ToolTip>
+                      <Style>
+                        <Color>#00ffffff</Color>
+                      </Style>
+                      <ChartMarker>
+                        <Style />
+                      </ChartMarker>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </ChartDataPoint>
+                  </ChartDataPoints>
+                  <Type>Range</Type>
+                  <Subtype>Bar</Subtype>
+                  <Style />
+                  <ChartEmptyPoints>
+                    <Style />
+                    <ChartMarker>
+                      <Style />
+                    </ChartMarker>
+                    <ChartDataLabel>
+                      <Style />
+                    </ChartDataLabel>
+                  </ChartEmptyPoints>
+                  <ChartAreaName>Default</ChartAreaName>
+                  <ValueAxisName>Primary</ValueAxisName>
+                  <CategoryAxisName>Primary</CategoryAxisName>
+                  <ChartSmartLabel>
+                    <CalloutLineColor>Black</CalloutLineColor>
+                    <MinMovingDistance>0pt</MinMovingDistance>
+                  </ChartSmartLabel>
+                </ChartSeries>
+              </ChartSeriesCollection>
+            </ChartData>
+            <ChartAreas>
+              <ChartArea Name="Default">
+                <ChartCategoryAxes>
+                  <ChartAxis Name="Primary">
+                    <Visible>False</Visible>
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                  <ChartAxis Name="Secondary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Location>Opposite</Location>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                </ChartCategoryAxes>
+                <ChartValueAxes>
+                  <ChartAxis Name="Primary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <Interval>2</Interval>
+                    <IntervalType>Months</IntervalType>
+                    <ChartMajorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Enabled>False</Enabled>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Minimum>=First(Fields!License_Start_Min.Value, "AviabilitiesReport")</Minimum>
+                    <Maximum>=DATEADD(Microsoft.VisualBasic.DateInterval.Year, Parameters!AddYearsToCutDates.Value, Fields!License_Start_Min.Value)</Maximum>
+                    <IncludeZero>false</IncludeZero>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                  <ChartAxis Name="Secondary">
+                    <Style>
+                      <Border>
+                        <Color>Gainsboro</Color>
+                        <Style>None</Style>
+                      </Border>
+                      <FontSize>8pt</FontSize>
+                      <Color>#5c5c5c</Color>
+                    </Style>
+                    <ChartAxisTitle>
+                      <Caption />
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>#5c5c5c</Color>
+                      </Style>
+                    </ChartAxisTitle>
+                    <ChartMajorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                    </ChartMajorGridLines>
+                    <ChartMinorGridLines>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>Dotted</Style>
+                        </Border>
+                      </Style>
+                    </ChartMinorGridLines>
+                    <ChartMajorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </ChartMajorTickMarks>
+                    <ChartMinorTickMarks>
+                      <Style>
+                        <Border>
+                          <Color>Gainsboro</Color>
+                        </Border>
+                      </Style>
+                      <Length>0.5</Length>
+                    </ChartMinorTickMarks>
+                    <CrossAt>NaN</CrossAt>
+                    <Location>Opposite</Location>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>NaN</Maximum>
+                    <ChartAxisScaleBreak>
+                      <Style />
+                    </ChartAxisScaleBreak>
+                  </ChartAxis>
+                </ChartValueAxes>
+                <Style>
+                  <BackgroundColor>#00ffffff</BackgroundColor>
+                  <BackgroundGradientType>None</BackgroundGradientType>
+                </Style>
+                <ChartElementPosition>
+                  <Height>100</Height>
+                  <Width>100</Width>
+                </ChartElementPosition>
+                <ChartInnerPlotPosition>
+                  <Left>2</Left>
+                  <Height>0.01</Height>
+                  <Width>98</Width>
+                </ChartInnerPlotPosition>
+              </ChartArea>
+            </ChartAreas>
+            <ChartBorderSkin>
+              <Style>
+                <BackgroundColor>Gray</BackgroundColor>
+                <BackgroundGradientType>None</BackgroundGradientType>
+                <Color>White</Color>
+              </Style>
+            </ChartBorderSkin>
+            <ChartNoDataMessage Name="NoDataMessage">
+              <Caption>No Data Available</Caption>
+              <Style>
+                <BackgroundGradientType>None</BackgroundGradientType>
+                <FontWeight>Bold</FontWeight>
+                <TextAlign>General</TextAlign>
+                <VerticalAlign>Top</VerticalAlign>
+              </Style>
+            </ChartNoDataMessage>
+            <DataSetName>AviabilitiesReport</DataSetName>
+            <Top>0.70013in</Top>
+            <Left>0.77431in</Left>
+            <Height>0.36459in</Height>
+            <Width>11.24652in</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>White</BackgroundColor>
+              <BackgroundGradientType>None</BackgroundGradientType>
+            </Style>
+            <cl:ComponentMetadata>
+              <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+            </cl:ComponentMetadata>
+          </Chart>
+          <Textbox Name="Textbox5">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Label>Date</Label>
+                    <Value>=FormatDateTime(Now(),DateFormat.ShortDate) + " " + FormatDateTime(Now(),DateFormat.ShortTime)</Value>
+                    <Style />
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>6.23486in</Top>
+            <Left>11.98833in</Left>
+            <Height>0.19792in</Height>
+            <Width>1.27729in</Width>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="HiddenTextBox">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!CountOfItems.Value, "AviabilitiesReport")</Value>
+                    <Style />
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.20708in</Top>
+            <Left>12.10416in</Left>
+            <Height>0.25in</Height>
+            <Width>1in</Width>
+            <ZIndex>6</ZIndex>
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>Yellow</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox2">
+            <CanGrow>true</CanGrow>
+            <CanShrink>true</CanShrink>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Holdback</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Calibri</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>6.23486in</Top>
+            <Left>0.02083in</Left>
+            <Height>0.25in</Height>
+            <Width>1in</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <Border>
+                <Color>White</Color>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>#ffc200</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox4">
+            <CanGrow>true</CanGrow>
+            <CanShrink>true</CanShrink>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Dark Period</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Calibri</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>White</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>5.94783in</Top>
+            <Left>0.02083in</Left>
+            <Height>0.25in</Height>
+            <Width>1in</Width>
+            <ZIndex>8</ZIndex>
+            <Style>
+              <Border>
+                <Color>White</Color>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>Black</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox6">
+            <CanGrow>true</CanGrow>
+            <CanShrink>true</CanShrink>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Deal Rights</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Calibri</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>5.66079in</Top>
+            <Left>0.02083in</Left>
+            <Height>0.25in</Height>
+            <Width>1in</Width>
+            <ZIndex>9</ZIndex>
+            <Style>
+              <Border>
+                <Color>White</Color>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>LightGrey</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox7">
+            <CanGrow>true</CanGrow>
+            <CanShrink>true</CanShrink>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Property</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Calibri</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>White</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>5.37375in</Top>
+            <Left>0.02083in</Left>
+            <Height>0.25in</Height>
+            <Width>1in</Width>
+            <ZIndex>10</ZIndex>
+            <Style>
+              <Border>
+                <Color>White</Color>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>DarkSeaGreen</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox8">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Please select a property, then rights / territory</Value>
+                    <Style>
+                      <FontStyle>Italic</FontStyle>
+                      <FontFamily>Arial</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox8</rd:DefaultName>
+            <Left>11.12375in</Left>
+            <Height>0.21875in</Height>
+            <Width>2.92708in</Width>
+            <ZIndex>11</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <Height>9.06472in</Height>
+        <Style />
+      </Body>
+      <Width>14.05083in</Width>
+      <Page>
+        <PageHeight>8.27in</PageHeight>
+        <PageWidth>11.69in</PageWidth>
+        <InteractiveHeight>0in</InteractiveHeight>
+        <InteractiveWidth>11.69in</InteractiveWidth>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="FromDealRightsLicenseStart">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>02/25/2016</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>License Start (MM/DD/YYYY)</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ToDealRightsLicenseEnd">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>12/31/9999</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>License End  (MM/DD/YYYY)</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="PropertyNameContains">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>The Night Manager</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Property Name contains</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Standard_Header_Properties">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Show only Standard/Series Header</Prompt>
+      <ValidValues>
+        <ParameterValues>
+          <ParameterValue>
+            <Value>true</Value>
+            <Label>Yes</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>false</Value>
+            <Label>No</Label>
+          </ParameterValue>
+        </ParameterValues>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="Property">
+      <DataType>String</DataType>
+      <Prompt>Property Name</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>PropertyName</DataSetName>
+          <ValueField>Property_Key</ValueField>
+          <LabelField>Property_Name</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="AddYearsToCutDates">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=SWITCH(
+DateDiff(Microsoft.VisualBasic.DateInterval.Year, CDATE("#" + Parameters!FromDealRightsLicenseStart.Value + "#"), CDATE("#" + Parameters!ToDealRightsLicenseEnd.Value + "#")) &lt; 5,
+DateDiff(Microsoft.VisualBasic.DateInterval.Year, CDATE("#" + Parameters!FromDealRightsLicenseStart.Value + "#"), CDATE("#" + Parameters!ToDealRightsLicenseEnd.Value + "#")),
+DateDiff(Microsoft.VisualBasic.DateInterval.Year, CDATE("#" + Parameters!FromDealRightsLicenseStart.Value + "#"), CDATE("#" + Parameters!ToDealRightsLicenseEnd.Value + "#")) &gt;= 5,
+5)</Value>
+        </Values>
+      </DefaultValue>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PropertyRights">
+      <DataType>String</DataType>
+      <Prompt>Rights</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>PropertyRights</DataSetName>
+          <ValueField>Property_Rights_Key</ValueField>
+          <LabelField>Rights_Selection</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="DealRightsTerritoryDescription">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <Prompt>Territory Description contains</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Territory">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>""</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Territory</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>Territory</DataSetName>
+          <ValueField>TerritoryDescription</ValueField>
+          <LabelField>TerritoryDescription</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>3</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>FromDealRightsLicenseStart</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>ToDealRightsLicenseEnd</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>PropertyNameContains</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>Property</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>PropertyRights</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>DealRightsTerritoryDescription</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>Territory</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>AddYearsToCutDates</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>Standard_Header_Properties</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <Language>en-US</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>8d356f70-5f94-47b7-95dc-65aa0acc7a72</rd:ReportID>
+</Report>

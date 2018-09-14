@@ -1,0 +1,41 @@
+﻿
+CREATE VIEW [dbo].[Invoicing]
+AS SELECT
+	InvoicingKey AS [Invoicing Key]
+    ,SOLItem as [SOL Item]
+    ,BillingCode as [Billing Code]
+    ,InvoiceCategory as [Invoice Category]
+    ,InvoiceStatus as [Invoice Status]
+    ,InterfaceStatus as [Interface Status]
+    ,[RightsTechIndicator] as [Rights/Tech Indicator]
+	,FeeType as [Fee Type]
+    ,InstallmentNo as [Installment No]
+    ,CurrencyCode as [Currency Code]
+    ,ProjectionYear as [Projection Year]
+    ,SAPLineItemNumber as [SAP Line Item Number]
+    ,SAPSalesOrderNumber as [SAP Sales Order Number]
+    ,InvoiceDueDate as [Invoice Due Date]
+	,SAPInvoiceCreatedDate AS [SAP Invoice Created Date]
+	,[SAPDocumentDate] as [SAP Document Date]
+	,[InvoiceUpdatedDate] AS [Invoice Updated Date]
+    ,InvoiceInstructions as [Invoice Instructions]
+    ,InvoiceDescription as [Invoice Description]
+    ,InvoiceReferenceNumber as [Invoice Reference Number]
+	,City AS [City (Invoicing)]
+	,Region AS [Region (Invoicing)]
+	,Country AS [Country (Invoicing)]
+	,CancellationStatus as [Cancellation Status]
+	,AccountingDocumentNumber AS [Accounting Document Number]
+	,ClearingDocumentNumber AS [Clearing Document Number]
+	,ClearingDocumentDate AS [Clearing Document Date]
+	,SOLNumber AS [SOL Number]
+	,IsDataMartDueDate AS [Is DM Due Date]
+	,[IssueSite] AS [Issue Site]
+	,[BillingCompanyId] AS [Billing Company Id]
+	,[BillingCompany] AS [Billing Company]
+FROM dbo.DimInvoicing
+GO
+GRANT VIEW DEFINITION
+    ON OBJECT::[dbo].[Invoicing] TO [DataServices]
+    AS [dbo];
+

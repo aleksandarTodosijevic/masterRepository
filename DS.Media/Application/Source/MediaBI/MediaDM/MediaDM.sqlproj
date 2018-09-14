@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>MediaDM</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{c2de3263-fa13-4a8b-97fd-9b7e890fda2e}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>MediaDM</RootNamespace>
+    <AssemblyName>MediaDM</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <Recovery>SIMPLE</Recovery>
+    <PageVerify>CHECKSUM</PageVerify>
+    <EnableFullTextSearch>False</EnableFullTextSearch>
+    <DefaultCollation>Latin1_General_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="Security\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\DimDate.sql" />
+    <Build Include="dbo\Tables\DimProperty.sql" />
+    <Build Include="dbo\Tables\DimCustomerContact.sql" />
+    <Build Include="dbo\Views\Date.sql" />
+    <Build Include="dbo\Functions\CreateKeyFromDate.sql" />
+    <Build Include="dbo\Functions\CreateKeyFromSourceID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimDate.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimUser.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimProperty.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimCustomerContact.sql" />
+    <Build Include="dbo\Tables\FactRights.sql" />
+    <Build Include="dbo\Views\Rights.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactRights.sql" />
+    <Build Include="dbo\Views\License Start Date.sql" />
+    <Build Include="dbo\Views\License End Date.sql" />
+    <Build Include="dbo\Views\License Date.sql" />
+    <Build Include="dbo\Tables\DimPropertyRights.sql" />
+    <Build Include="dbo\Views\Property Rights.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimPropertyRights.sql" />
+    <Build Include="dbo\Tables\DimDealRights.sql" />
+    <Build Include="dbo\Views\Deal Rights.sql" />
+    <Build Include="dbo\Views\Property.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimDealRights.sql" />
+    <Build Include="dbo\Tables\DimComment.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimComment.sql" />
+    <Build Include="dbo\Tables\FactComments.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactComments.sql" />
+    <Build Include="dbo\Views\Comments.sql" />
+    <Build Include="dbo\Views\Due Date.sql" />
+    <Build Include="dbo\Views\Comment.sql" />
+    <Build Include="dbo\Views\Customer Contact.sql" />
+    <Build Include="dbo\Tables\DimDeal.sql" />
+    <Build Include="dbo\Tables\DimInvoicing.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimDeal.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimInvoicing.sql" />
+    <Build Include="dbo\Views\Deal.sql" />
+    <Build Include="dbo\Views\Invoicing.sql" />
+    <Build Include="Security\svc_dw.sql" />
+    <Build Include="Security\Permissions.sql" />
+    <Build Include="Security\ETLRole.sql" />
+    <Build Include="dbo\Views\Deal Updated On Date.sql" />
+    <Build Include="dbo\Views\Deal Created On Date.sql" />
+    <Build Include="dbo\Views\Deal Created By.sql" />
+    <Build Include="dbo\Views\Deal Updated By.sql" />
+    <Build Include="dbo\Stored Procedures\usp_TruncateTable.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimDealProperty.sql" />
+    <Build Include="dbo\Tables\DimDealProperty.sql" />
+    <Build Include="dbo\Views\Deal Property.sql" />
+    <Build Include="dbo\Views\Invoice Created On Date.sql" />
+    <Build Include="dbo\Views\Invoice Processed Date.sql" />
+    <Build Include="dbo\Tables\DimSalesArea.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimSalesArea.sql" />
+    <Build Include="dbo\Views\Sales Area.sql" />
+    <Build Include="dbo\Tables\DimProjectionTerritory.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimProjectionTerritory.sql" />
+    <Build Include="dbo\Views\Projection Territory.sql" />
+    <Build Include="dbo\Tables\DimIncomeType.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimIncomeType.sql" />
+    <Build Include="dbo\Views\Income Type.sql" />
+    <Build Include="dbo\Tables\DimProjectionYear.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimProjectionYear.sql" />
+    <Build Include="dbo\Views\Projection Year.sql" />
+    <Build Include="dbo\Tables\DimCurrency.sql" />
+    <Build Include="dbo\Views\Currency.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimCurrency.sql" />
+    <Build Include="dbo\Tables\FactProjections.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactProjections.sql" />
+    <Build Include="dbo\Views\Projections.sql" />
+    <Build Include="dbo\Tables\FactAllocations.sql" />
+    <Build Include="dbo\Views\Allocations.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactAllocations.sql" />
+    <Build Include="dbo\Tables\FactOrderDetails.sql" />
+    <Build Include="dbo\Tables\DimContract.sql" />
+    <Build Include="dbo\Views\Order Details.sql" />
+    <Build Include="dbo\Views\Contract.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactOrderDetails.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimContract.sql" />
+    <Build Include="dbo\Views\Ship Date.sql" />
+    <Build Include="dbo\Views\Due Date for Compare.sql" />
+    <Build Include="dbo\Views\Invioce Processed Date for Compare.sql" />
+    <Build Include="dbo\Tables\DimProjection.sql" />
+    <Build Include="dbo\Tables\FactBudgets.sql" />
+    <Build Include="dbo\Tables\DimBudget.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactBudgets.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimProjection.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimBudget.sql" />
+    <Build Include="dbo\Views\Budgets.sql" />
+    <Build Include="dbo\Views\Budget.sql" />
+    <Build Include="dbo\Views\Projection.sql" />
+    <Build Include="dbo\Tables\DimUser.sql" />
+    <Build Include="dbo\Tables\Security_DimUser.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateSecurity_DimUser.sql" />
+    <Build Include="dbo\Tables\Security_FactProperties.sql" />
+    <Build Include="dbo\Tables\Security_FactSalesAreas.sql" />
+    <Build Include="dbo\Views\Security User.sql" />
+    <Build Include="dbo\Views\Security Sales Areas.sql" />
+    <Build Include="dbo\Views\Security Properties.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateSecurity_FactProperties.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateSecurity_FactSalesAreas.sql" />
+    <Build Include="dbo\Tables\DimProjectionAnticipated.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimProjectionAnticipated.sql" />
+    <Build Include="dbo\Views\Projection Anticipated.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimDelivery.sql" />
+    <Build Include="dbo\Tables\DimDelivery.sql" />
+    <Build Include="dbo\Views\Delivery.sql" />
+    <Build Include="dbo\Tables\FactDeliveries.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactDeliveries.sql" />
+    <Build Include="dbo\Views\Deliveries.sql" />
+    <Build Include="dbo\Tables\FactClientRepresentations.sql" />
+    <Build Include="dbo\Tables\DimClient.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactClientRepresentations.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimClient.sql" />
+    <Build Include="dbo\Views\Client Representations.sql" />
+    <Build Include="dbo\Views\Client.sql" />
+    <Build Include="dbo\Views\Ultimate Owner.sql" />
+    <Build Include="dbo\Views\DM Due Date.sql" />
+    <Build Include="dbo\Views\DM Due Date for Compare.sql" />
+    <Build Include="dbo\Tables\DimRole.sql" />
+    <Build Include="dbo\Tables\FactUserRoles.sql" />
+    <Build Include="Security\svc_bi.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimRole.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactUserRoles.sql" />
+    <Build Include="dbo\Views\User Roles.sql" />
+    <Build Include="dbo\Views\Role.sql" />
+    <Build Include="dbo\Views\User.sql" />
+    <Build Include="dbo\Views\Allocation Updated On Date.sql" />
+    <Build Include="dbo\Views\Allocation Created On Date.sql" />
+    <Build Include="dbo\Tables\DimUserContract.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimUserContract.sql" />
+    <Build Include="dbo\Views\User Contract.sql" />
+    <Build Include="dbo\Tables\FactUsersContracts.sql" />
+    <Build Include="dbo\Views\User Contracts.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactUsersContracts.sql" />
+    <Build Include="dbo\Tables\Security_FactProjections.sql" />
+    <Build Include="dbo\Views\Security Projections.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateSecurity_FactProjections.sql" />
+    <Build Include="dbo\Views\Commission.sql" />
+    <Build Include="dbo\Views\Property Commission.sql" />
+    <Build Include="dbo\Tables\FactUserBillingCompanies.sql" />
+    <Build Include="dbo\Tables\DimUserBillingCompany.sql" />
+    <Build Include="dbo\Views\User Billing Company.sql" />
+    <Build Include="dbo\Views\User Billing Companies.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactUserBillingCompanies.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimUserBillingCompany.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimPipelineDeal.sql" />
+    <Build Include="dbo\Tables\FactPipelineDeals.sql" />
+    <Build Include="dbo\Tables\DimPipelineDealHistory.sql" />
+    <Build Include="dbo\Tables\FactUserProjectionNumbers.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactPipelineDeals.sql" />
+    <Build Include="dbo\Tables\DimUserProjectionNumber.sql" />
+    <Build Include="dbo\Views\User Projection Number.sql" />
+    <Build Include="dbo\Views\Pipeline Deals.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactUserProjectionNumbers.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimUserProjectionNumber.sql" />
+    <Build Include="dbo\Views\User Projection Numbers.sql" />
+    <Build Include="dbo\Views\Pipeline Deal.sql" />
+    <Build Include="dbo\Tables\DimPipelineDeal.sql" />
+    <Build Include="dbo\Views\Pipeline Deal History.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimPipelineDealHistory.sql" />
+    <Build Include="Security\DataServices.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimBudget.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimClient.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimComment.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimContract.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimCurrency.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimCustomerContact.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimDeal.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimDealProperty.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimDealRights.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimDelivery.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimIncomeType.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimInvoicing.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimPipelineDeal.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimPipelineDealHistory.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimProjection.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimProjectionAnticipated.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimProjectionTerritory.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimProperty.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimPropertyRights.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimRole.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimSalesArea.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimUser.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimUserBillingCompany.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimUserContract.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimUserProjectionNumber.sql" />
+    <Build Include="dbo\Stored Procedures\usp_DeleteAllOldData.sql" />
+    <Build Include="dbo\Tables\FactDealRightsAllocations.sql" />
+    <Build Include="dbo\Views\Deal Rights Allocations.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactDealRightsAllocations.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactUsersContracts.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactUserRoles.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactUserProjectionNumbers.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactUserBillingCompanies.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactRights.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactProjections.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactPipelineDeals.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactOrderDetails.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactComments.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactClientRepresentations.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactBudgets.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashFactAllocations.sql" />
+    <Build Include="dbo\Tables\DimPropertyVersion.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimPropertyVersion.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimPropertyVersion.sql" />
+    <Build Include="dbo\Views\Property Version.sql" />
+    <Build Include="dbo\Tables\FactBridgeTerritoriesPropertyRights.sql" />
+    <Build Include="dbo\Tables\FactBridgeTerritoriesDealRights.sql" />
+    <Build Include="dbo\Tables\DimTerritory.sql" />
+    <Build Include="dbo\Views\Bridge Territories Property Rights.sql" />
+    <Build Include="dbo\Views\Bridge Territories Deal Rights.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimTerritory.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimTerritory.sql" />
+    <Build Include="dbo\Views\Territory.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactBridgeTerritoriesPropertyRights.sql" />
+    <Build Include="dbo\Functions\ufn_GenerateKey.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactBridgeTerritoriesDealRights.sql" />
+    <Build Include="dbo\Views\Entertainment Shipped Date.sql" />
+    <Build Include="dbo\Views\Recognition Date.sql" />
+    <Build Include="dbo\Tables\FactBridgeRightsDealRights.sql" />
+    <Build Include="dbo\Tables\DimRights.sql" />
+    <Build Include="dbo\Views\Rights Description.sql" />
+    <Build Include="dbo\Views\Bridge Rights Deal Rights.sql" />
+    <Build Include="dbo\Functions\ufn_GetHashDimRights.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactBridgeRightsDealRights.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateDimRights.sql" />
+    <Build Include="dbo\Tables\FactBridgeRightsPropertyRights.sql" />
+    <Build Include="dbo\Views\Bridge Rights Property Rights.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactBridgeRightsPropertyRights.sql" />
+    <Build Include="dbo\Tables\FactBridgeTerritoriesPipelineDeals.sql" />
+    <Build Include="dbo\Views\Bridge Territories Pipeline Deals.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PopulateFactBridgeTerritoriesPipelineDeals.sql" />
+    <Build Include="dbo\Views\Switch.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\130\SqlSchemas\master.dacpac">
+      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\130\SqlSchemas\master.dacpac</HintPath>
+      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
+      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
+    </ArtifactReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MediaStaging\MediaDMStaging.sqlproj">
+      <Name>MediaDMStaging</Name>
+      <Project>{51e91bc3-492c-4580-91b5-e4ae33ffd2d5}</Project>
+      <Private>True</Private>
+      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
+      <DatabaseSqlCmdVariable>MediaDMStaging</DatabaseSqlCmdVariable>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SqlCmdVariable Include="MediaDMStaging">
+      <DefaultValue>MediaDMStaging</DefaultValue>
+      <Value>$(SqlCmdVar__1)</Value>
+    </SqlCmdVariable>
+  </ItemGroup>
+</Project>

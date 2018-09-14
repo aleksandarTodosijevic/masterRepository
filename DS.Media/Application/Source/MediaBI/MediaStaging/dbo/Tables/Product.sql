@@ -1,0 +1,66 @@
+﻿CREATE TABLE [dbo].[Product] (
+    [Id]                         INT           NOT NULL,
+    [ProductCategoryTypeIndexId] INT           NOT NULL,
+    [ProductTypeId]              INT           NULL,
+    [ProductNo]                  VARCHAR (10)  NULL,
+    [OPANumber]                  VARCHAR (12)  NOT NULL,
+    [OPANumberT]                 VARCHAR (12)  NULL,
+    [Description]                VARCHAR (50)  NOT NULL,
+    [DescriptionT]               VARCHAR (100) NULL,
+    [ShortDesc]                  VARCHAR (30)  NOT NULL,
+    [GenericName]                VARCHAR (30)  NULL,
+    [ParentId]                   INT           NULL,
+    [AKAName1]                   VARCHAR (50)  NULL,
+    [AKAName2]                   VARCHAR (50)  NULL,
+    [AKAName3]                   VARCHAR (50)  NULL,
+    [AreaOfBusinessSuffixId]     CHAR (2)      NOT NULL,
+    [AreaOfBusinessSuffixTId]    CHAR (2)      NULL,
+    [ProjectionNo]               VARCHAR (10)  NOT NULL,
+    [ProjectionNoT]              VARCHAR (10)  NULL,
+    [IncomeProjectionMonth]      SMALLINT      NULL,
+    [ProjectionYear]             CHAR (4)      NULL,
+    [ProjectionSwitch]           BIT           NOT NULL,
+    [SubjectCategoryId]          INT           NULL,
+    [LicensorId]                 INT           NULL,
+    [IssueSiteId]                INT           NULL,
+    [ExecResponsibleId]          INT           NULL,
+    [AccountantResponsibleId]    INT           NULL,
+    [BillingCompanyId]           INT           NULL,
+    [StartDate]                  DATETIME      NULL,
+    [EndDate]                    DATETIME      NULL,
+    [NewsEmbargo]                BIT           NULL,
+    [EmbargoStartDate]           DATETIME      NULL,
+    [EmbargoEndDate]             DATETIME      NULL,
+    [WorldFeed]                  BIT           NULL,
+    [MusicRoyalty]               BIT           NOT NULL,
+    [SequenceNumber]             INT           NOT NULL,
+    [ContractIssueCategoryId]    INT           NULL,
+    [StatusId]                   INT           NOT NULL,
+    [CreatedDate]                DATETIME      NOT NULL,
+    [CreatedBy]                  INT           NOT NULL,
+    [UpdatedDate]                DATETIME      NULL,
+    [UpdatedBy]                  INT           NULL,
+    [UltimateOwnerId]            INT           NULL,
+    [InvoiceCategoryId]          INT           NULL,
+    [HeadOfBusinessUnitId]       INT           NULL,
+    [HeadOfSportId]              INT           NULL,
+    [LegalContactId]             INT           NULL,
+    [ReportingTypeId]            INT           NULL,
+    [PremiereDate]               DATETIME      NULL,
+    [AvailabilityDate]           DATETIME      NULL,
+	[ImgAsAuthorisedSignatory]   BIT		   NULL,
+	[IncludeInOutputDeal]		 BIT		   NULL,
+	[SellAtRisk]				 BIT		   NULL,
+	[LegalOnlineNo]				 INT		   NULL,
+	[ContractStatus]			 INT		   NULL,
+    CONSTRAINT [PK_Product_Id] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 95)
+);
+
+
+
+
+
+
+
+
+

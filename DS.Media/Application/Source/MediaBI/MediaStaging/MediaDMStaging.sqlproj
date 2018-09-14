@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>MediaDMStaging</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{51e91bc3-492c-4580-91b5-e4ae33ffd2d5}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>MediaStaging</RootNamespace>
+    <AssemblyName>MediaStaging</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <Recovery>SIMPLE</Recovery>
+    <PageVerify>CHECKSUM</PageVerify>
+    <EnableFullTextSearch>False</EnableFullTextSearch>
+    <DefaultCollation>Latin1_General_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="Security\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\BusinessType_lu.sql" />
+    <Build Include="dbo\Tables\Client.sql" />
+    <Build Include="dbo\Tables\Contract.sql" />
+    <Build Include="dbo\Tables\Currency_lu.sql" />
+    <Build Include="dbo\Tables\Customer.sql" />
+    <Build Include="dbo\Tables\CustomerComment.sql" />
+    <Build Include="dbo\Tables\CustomerContact.sql" />
+    <Build Include="dbo\Tables\InvoiceStatus_lu.sql" />
+    <Build Include="dbo\Tables\OrderComment.sql" />
+    <Build Include="dbo\Tables\OrderDetail.sql" />
+    <Build Include="dbo\Tables\OrderDetailProductClient.sql" />
+    <Build Include="dbo\Tables\OrderDetailRightsDetail.sql" />
+    <Build Include="dbo\Tables\OrderHeader.sql" />
+    <Build Include="dbo\Tables\OrderInvoice.sql" />
+    <Build Include="dbo\Tables\OrderInvoiceDetail.sql" />
+    <Build Include="dbo\Tables\OrderRightsInvoice.sql" />
+    <Build Include="dbo\Tables\OrderRightsInvoiceOrderDetail.sql" />
+    <Build Include="dbo\Tables\OrderStatus_lu.sql" />
+    <Build Include="dbo\Tables\Product.sql" />
+    <Build Include="dbo\Tables\SalesArea.sql" />
+    <Build Include="dbo\Tables\SalesCategory_lu.sql" />
+    <Build Include="dbo\Tables\User.sql" />
+    <Build Include="dbo\Tables\TerritoryTree_lu.sql" />
+    <Build Include="dbo\Tables\TerritorySelectionEx.sql" />
+    <Build Include="dbo\Tables\TerritorySelection.sql" />
+    <Build Include="dbo\Tables\Territory_lu.sql" />
+    <Build Include="dbo\Tables\RightsTree_lu.sql" />
+    <Build Include="dbo\Tables\RightsSelectionEx.sql" />
+    <Build Include="dbo\Tables\RightsSelection.sql" />
+    <Build Include="dbo\Tables\Rights_lu.sql" />
+    <Build Include="dbo\Tables\LanguageSelectionEx.sql" />
+    <Build Include="dbo\Tables\LanguageSelection.sql" />
+    <Build Include="dbo\Tables\Language_lu.sql" />
+    <Build Include="dbo\Tables\DesignatedRight.sql" />
+    <Build Include="dbo\Tables\Fee_lu.sql" />
+    <Build Include="Security\svc_dw.sql" />
+    <Build Include="Security\Permissions.sql" />
+    <Build Include="dbo\Tables\SubjectCategory_lu.sql" />
+    <Build Include="dbo\Tables\ProductCategoryTypeIndex_lu.sql" />
+    <Build Include="dbo\Tables\ProductCategoryType_lu.sql" />
+    <Build Include="dbo\Tables\ProductCategory_lu.sql" />
+    <Build Include="dbo\Tables\BillingCompany_lu.sql" />
+    <Build Include="dbo\Tables\ProjectionHeader.sql" />
+    <Build Include="dbo\Tables\Projection.sql" />
+    <Build Include="dbo\Tables\SalesRegion_lu.sql" />
+    <Build Include="dbo\Tables\IncomeType_lu.sql" />
+    <Build Include="dbo\Tables\ProjectionNumber.sql" />
+    <Build Include="dbo\Tables\InternalAllocation.sql" />
+    <Build Include="dbo\Tables\AreaOfBusinessSuffix_lu.sql" />
+    <Build Include="dbo\Tables\AreaOfBusiness_lu.sql" />
+    <Build Include="dbo\Tables\ProjectionTerritoryTree_lu.sql" />
+    <Build Include="dbo\Tables\UserAreaOfBusiness.sql" />
+    <Build Include="dbo\Tables\UserSalesArea.sql" />
+    <Build Include="dbo\Tables\Licensor_lu.sql" />
+    <Build Include="dbo\Tables\ContractType_lu.sql" />
+    <Build Include="dbo\Tables\ContractIssueCategory_lu.sql" />
+    <Build Include="dbo\Tables\AgreementType_lu.sql" />
+    <Build Include="dbo\Tables\ProductContractClause.sql" />
+    <Build Include="dbo\Tables\OrderInvoiceDetailDelivery.sql" />
+    <Build Include="dbo\Tables\OrderDetailDelivery.sql" />
+    <Build Include="dbo\Tables\IssueSite_lu.sql" />
+    <Build Include="dbo\Tables\CustomerAddress.sql" />
+    <Build Include="dbo\Tables\TerritoryRegion_lu.sql" />
+    <Build Include="dbo\Tables\SAPImportedInvoices.sql" />
+    <Build Include="dbo\Tables\MDS_SalesPortfolio.sql" />
+    <Build Include="dbo\Tables\UserSalesPortfolio.sql" />
+    <Build Include="dbo\Tables\VideoStandard_lu.sql" />
+    <Build Include="dbo\Tables\Version.sql" />
+    <Build Include="dbo\Tables\TapeFormat_lu.sql" />
+    <Build Include="dbo\Tables\ProductType_lu.sql" />
+    <Build Include="dbo\Tables\FeedCoordination_lu.sql" />
+    <Build Include="dbo\Tables\DeliveryType_lu.sql" />
+    <Build Include="dbo\Tables\AudioFormat_lu.sql" />
+    <Build Include="dbo\Tables\AspectRatio_lu.sql" />
+    <Build Include="dbo\Tables\SAPCustomer.sql" />
+    <Build Include="dbo\Tables\ContractStatus_lu.sql" />
+    <Build Include="dbo\Tables\vw_IncomeType.sql" />
+    <Build Include="dbo\Tables\RepresentationAgreement.sql" />
+    <Build Include="dbo\Tables\ProductRepresentationAgreement.sql" />
+    <Build Include="dbo\Tables\ClientRepresentationAgreement.sql" />
+    <Build Include="dbo\Tables\ClientAddress.sql" />
+    <Build Include="dbo\Tables\MDS_Commission.sql" />
+    <Build Include="dbo\Tables\UserRole.sql" />
+    <Build Include="dbo\Tables\UserIssueSiteLicensorParty.sql" />
+    <Build Include="dbo\Tables\UserCustomerFavorite.sql" />
+    <Build Include="dbo\Tables\UserBillingCompany.sql" />
+    <Build Include="dbo\Tables\ProductComment.sql" />
+    <Build Include="dbo\Tables\PipelineDealHistory.sql" />
+    <Build Include="dbo\Tables\PipelineDeal.sql" />
+    <Build Include="dbo\Tables\IssueSiteLegalOnlineContact.sql" />
+    <Build Include="dbo\Tables\InvoiceCategory_lu.sql" />
+    <Build Include="dbo\Tables\Role_lu.sql" />
+    <Build Include="dbo\Tables\UserLoginHistory.sql" />
+    <Build Include="dbo\Tables\SystemRole_lu.sql" />
+    <Build Include="dbo\Tables\LicensorParty_lu.sql" />
+    <Build Include="dbo\Tables\UserProjectionNumber.sql" />
+    <Build Include="dbo\Tables\Status.sql" />
+    <Build Include="dbo\Tables\MDS_SalesArea_1.sql" />
+    <Build Include="dbo\Tables\ReportingType_lu.sql" />
+    <Build Include="dbo\Tables\PipelineDealProjection.sql" />
+    <Build Include="dbo\Tables\Exclusive_lu.sql" />
+  </ItemGroup>
+</Project>

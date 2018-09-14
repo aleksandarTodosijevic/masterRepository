@@ -1,0 +1,10 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="Media"
+  DTS:DTSID="{8356C7A8-950D-444C-84F5-4109BD4D402D}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="Data Source=GB-UXS-WOLQV-03;Initial Catalog=SalesOnline;Provider=SQLOLEDB.1;Integrated Security=SSPI;Application Name=SSIS-{8356C7A8-950D-444C-84F5-4109BD4D402D}SalesOnline;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

@@ -1,0 +1,2069 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="6/16/2016 11:03:27 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="GB-UXS-WL-12192"
+  DTS:CreatorName="IMGWORLD\Deak9000"
+  DTS:DTSID="{078DBFD1-3D23-45F2-9A3C-95BA00F991C8}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="13.0.2165.0"
+  DTS:LocaleID="2057"
+  DTS:ObjectName="LoadDM"
+  DTS:PackageType="5"
+  DTS:VersionBuild="139"
+  DTS:VersionGUID="{E6F283F8-8564-4976-9C8B-F756BA8D889C}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Delete Old Data"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{C32E1C2F-6718-4861-AF37-2AA8655C3679}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Delete Old Data">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Delete Old Data\Delete old data"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{A2C043E7-4B27-416A-B608-B0A32AA94380}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Delete old data"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_DeleteAllOldData]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Populate Dim"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{62157871-84AA-46BF-A36D-D7753C39BFAC}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Populate Dim">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimBudget"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{72153107-e90f-481c-a0c9-8acbf012150a}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimBudget"
+          DTS:ThreadHint="0">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{7cff54a8-55e3-4b9f-a677-b6d6d28f2303}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimBudget</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimBudget]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimClient"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{a9e008af-52f4-493e-ae73-9dce6e643bb6}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimClient"
+          DTS:ThreadHint="1">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{0a82c95b-9921-437d-a7bd-252dcf58d4d6}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimClient</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimClient]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimComment"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{57a2343e-6ee6-454f-aea3-489550b5609e}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimComment"
+          DTS:ThreadHint="2">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{f921e94e-3857-4576-80ca-c686c9f6ab68}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimComment</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimComment]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimContract"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{9f0fcb8a-7f54-441f-88db-5a602fb7140a}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimContract"
+          DTS:ThreadHint="27">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{c766cb28-ded8-44b5-a97c-726e6b73a937}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimContract</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimContract]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimCurrency"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{c1d238e4-42f6-4fbb-bc11-440ca442c03a}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimCurrency"
+          DTS:ThreadHint="28">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{479ac83a-21ea-4df4-b80b-b8f5750c5126}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimCurrency</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimCurrency]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimCustomerContact"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{380200cf-bbdf-4aa2-afce-d9919068925e}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimCustomerContact"
+          DTS:ThreadHint="26">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{e87ee398-679b-4a55-b1a1-c5bb33ab0bf7}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimCustomerContact</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimCustomerContact]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimDeal"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{bb75159d-22f0-4575-af36-8b7b2a784fb7}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimDeal"
+          DTS:ThreadHint="11">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{e6606bbc-d8d5-4c32-9212-2bf934d29b61}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimDeal</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimDeal]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimDealProperty"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{4e355bd0-d46f-4b9d-aa23-bb0247091bdb}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimDealProperty"
+          DTS:ThreadHint="3">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{f48bf537-e67c-41e7-a37a-f007aeb25499}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimDealProperty</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimDealProperty]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimDealRights"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{cdec891a-add3-4abc-9375-9abc0372eb07}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimDealRights"
+          DTS:ThreadHint="12">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{837df0c4-35c3-4087-b85b-29253cb3ba89}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimDealRights</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimDealRights]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimDelivery"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{8e948e2a-0e17-45cf-83db-ec44d2cf5623}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimDelivery"
+          DTS:ThreadHint="13">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{04ab22bf-02c8-4e10-b19e-f64a2eb01d61}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimDelivery</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimDelivery]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimIncomeType"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{f3197adf-e75f-41e2-ad86-ceb0f1a52a85}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimIncomeType"
+          DTS:ThreadHint="14">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{05742759-bfa8-45a0-8eae-d497d9060b45}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimIncomeType</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimIncomeType]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimInvoicing"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{95a55f47-ddb7-407f-bc68-37224854cfd8}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimInvoicing"
+          DTS:ThreadHint="15">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{e03a6a43-7033-4517-98c1-4a2bd94a3a66}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimInvoicing</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimInvoicing]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimPipelineDeal"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{c7c3dd83-d89f-4130-93f8-d41ab4773f92}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimPipelineDeal"
+          DTS:ThreadHint="16">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{6e3fdc6b-981b-4f35-9d2a-99f84681d9d3}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimPipelineDeal</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimPipelineDeal]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimPipelineDealHistory"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{1753d1ac-a8b6-4c68-9fba-b7d5d1f496d0}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimPipelineDealHistory"
+          DTS:ThreadHint="17">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{a0bb2164-e3ac-49a5-a69f-460e76fc6a6f}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimPipelineDealHistory</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimPipelineDealHistory]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimProjection"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{d7d14877-b3e7-44c2-b672-ff0fd272dd0c}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimProjection"
+          DTS:ThreadHint="18">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{1ace1c4a-4e7b-4539-9fae-f234d53928c4}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimProjection</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimProjection]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimProjectionAnticipated"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{4c8a9199-272a-479f-84b2-3390c8ea82a4}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimProjectionAnticipated"
+          DTS:ThreadHint="19">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{1a60f81b-3154-4e87-939f-a5244a6b11eb}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimProjectionAnticipated</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimProjectionAnticipated]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimProjectionTerritory"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{c2a13383-84e3-45d2-8d26-b779d7be779b}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimProjectionTerritory"
+          DTS:ThreadHint="20">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{7be1f3b4-eba4-4bdd-9a24-2e4c085b637b}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimProjectionTerritory</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimProjectionTerritory]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimProperty"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{14e0c6b8-321a-48ac-9a75-072c5af77b3f}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimProperty"
+          DTS:ThreadHint="21">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{35dfbc4d-41d6-4602-abb5-0eb4bcbb4d5a}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimProperty</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimProperty]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimPropertyRights"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{e4a50930-66f3-4827-b171-4902667f88d2}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimPropertyRights"
+          DTS:ThreadHint="22">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{f5640763-549d-40c8-868d-3db532f6498e}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimPropertyRights</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimPropertyRights]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimPropertyVersion"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{16b9ac31-5e6d-44c3-965a-ea906878e87f}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimPropertyVersion"
+          DTS:ThreadHint="23">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{d28554aa-805e-4be1-aea1-b47edc7f0140}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimPropertyVersion</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimPropertyVersion]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimRights"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{e487fc77-e5c6-4681-a354-b4c8bade8bac}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimRights"
+          DTS:ThreadHint="4">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{3ba462f7-dd51-448f-b51b-38f5dd3472fc}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimRights</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimRights]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimRole"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{cfc77d26-ee20-441a-8d67-344e9d62f30a}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimRole"
+          DTS:ThreadHint="5">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{2de8a959-5719-499a-8cf6-c83a1d55f966}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimRole</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimRole]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimSalesArea"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{217c4f2b-9c8d-4f93-a59c-ef407a4381e2}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimSalesArea"
+          DTS:ThreadHint="6">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{b8b8eb75-f5a2-43cd-b0d7-04195e6cb991}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimSalesArea</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimSalesArea]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimTerritory"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{800d2e0e-f6d7-4a75-bee5-a2e2f7c0b988}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimTerritory"
+          DTS:ThreadHint="7">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{910998e9-16fc-429f-9e3e-acaf5248d8e2}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimTerritory</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimTerritory]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimUser"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{e1139bac-bf78-4011-b891-327e14b7244d}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimUser"
+          DTS:ThreadHint="8">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{b6678155-f35a-4b3d-9e10-b868aecd9956}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimUser</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimUser]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimUserBillingCompany"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{878cacc9-712c-4ee5-b415-49fb609c4975}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimUserBillingCompany"
+          DTS:ThreadHint="9">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{d2e3d67a-ba31-4ff4-a6ef-829b4830bc92}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimUserBillingCompany</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimUserBillingCompany]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimUserContract"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{a4bc034d-a5de-4c16-8f45-45fff8690eb1}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimUserContract"
+          DTS:ThreadHint="10">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{718ac80f-aa01-4db6-b175-716e056a3eb6}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimUserContract</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimUserContract]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load DimUserProjectionNumber"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{2e498e52-2702-48c8-804c-a8d7854d1efd}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load DimUserProjectionNumber"
+          DTS:ThreadHint="25">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{367d0b5f-8d54-434d-bd0b-e43ad3b09899}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">DimUserProjectionNumber</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateDimUserProjectionNumber]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Dim\Load Security_DimUser"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{a35ed827-d664-496b-adae-63ba7630ca7d}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load Security_DimUser"
+          DTS:ThreadHint="24">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{187330c1-7323-48a5-bebf-107a7459c583}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">Security_DimUser</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateSecurity_DimUser]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Populate Fact"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{51d38a91-fcfa-4a71-8d04-4e80194b45b7}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Populate Fact">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactAllocations"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{402e49a1-057d-4b56-b419-3014fdd00a91}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactAllocations"
+          DTS:ThreadHint="0">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{22b2895f-8fee-4e72-aa36-e6320e0f707b}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactAllocations</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactAllocations]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactBridgeRightsDealRights"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{439235e9-70d4-4a35-9261-ab39a6318376}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactBridgeRightsDealRights"
+          DTS:ThreadHint="1">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{2e490c2a-aab7-47f5-8a33-8f6c065053e0}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactBridgeRightsDealRights</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactBridgeRightsDealRights]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactBridgeRightsPropertyRights"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{715cba3b-cf02-4571-9c3e-e81e90727f65}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactBridgeRightsPropertyRights"
+          DTS:ThreadHint="2">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{2183183a-b219-4340-9534-89359b2e4726}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactBridgeRightsPropertyRights</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactBridgeRightsPropertyRights]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactBridgeTerritoriesDealRights"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{0596f4dd-162d-4efc-9ea9-6655f3602224}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactBridgeTerritoriesDealRights"
+          DTS:ThreadHint="3">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{eee4c9e3-047d-4ceb-96ae-aea57a816251}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactBridgeTerritoriesDealRights</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactBridgeTerritoriesDealRights]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactBridgeTerritoriesPipelineDeals"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{6732732f-528d-4577-a7f5-df1f5f80e0ed}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactBridgeTerritoriesPipelineDeals"
+          DTS:ThreadHint="19">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{43a393c0-db76-4d30-aa53-bf693202230b}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactBridgeTerritoriesPipelineDeals</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactBridgeTerritoriesPipelineDeals]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactBridgeTerritoriesPropertyRights"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{a6cde178-6b26-4e98-b257-f096878ca6c7}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactBridgeTerritoriesPropertyRights"
+          DTS:ThreadHint="4">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{98e3de42-4dcd-4711-b76f-e7a739252c92}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactBridgeTerritoriesPropertyRights</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactBridgeTerritoriesPropertyRights]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactBudgets"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{ef165704-6d6f-4ad3-933e-37668b91ad51}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactBudgets"
+          DTS:ThreadHint="5">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{91ec15ce-d419-4c58-9b1f-1b636769b04e}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactBudgets</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactBudgets]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactClientRepresentations"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{43201ac0-09f1-4384-895d-4d190e74632d}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactClientRepresentations"
+          DTS:ThreadHint="6">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{3f968f05-ba8c-46ce-9203-e399d8a83f7b}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactClientRepresentations</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactClientRepresentations]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactComments"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{39c0f293-a4b4-45d2-893a-2b8b880a514a}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactComments"
+          DTS:ThreadHint="7">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{9fb27540-d577-4797-94f7-e3f57d33f82e}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactComments</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactComments]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactDealRightsAllocations"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{1a4af9bb-c105-4dce-bd0d-3118154bd8ed}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactDealRightsAllocations"
+          DTS:ThreadHint="8">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{946e5bc5-5dde-42a6-8e8f-0f50278fa180}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactDealRightsAllocations</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactDealRightsAllocations]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactDeliveries"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{15b80859-b005-492c-9e9c-7d43c7b6c82a}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactDeliveries"
+          DTS:ThreadHint="9">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{d4f8653e-f817-42e4-9c5e-63b4d75f57b4}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactDeliveries</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactDeliveries]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactOrderDetails"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{7fa562d1-f540-4178-a326-76ae07479316}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactOrderDetails"
+          DTS:ThreadHint="10">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{3ddaa33f-41ca-40e0-b1f0-cd3ac342ae9a}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactOrderDetails</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactOrderDetails]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactPipelineDeals"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{38242fee-7ee0-4485-85db-06d534e2648b}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactPipelineDeals"
+          DTS:ThreadHint="11">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{654dbba3-8cc1-4022-aafa-3155786da700}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactPipelineDeals</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactPipelineDeals]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactProjections"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{43b63f6a-a1db-4b81-a6cd-53b7d4066400}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactProjections"
+          DTS:ThreadHint="12">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{1b9d9fb8-9ef5-4ece-9ca5-acdc33c90441}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactProjections</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactProjections]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactRights"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{e875b099-7ed9-4796-adb1-3de54ae9064c}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactRights"
+          DTS:ThreadHint="13">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{6e058c26-0364-4623-a2d8-193cd40400ad}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactRights</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactRights]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactUserBillingCompanies"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{ee662e3a-37df-46fa-b015-812e5a8db75e}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactUserBillingCompanies"
+          DTS:ThreadHint="14">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{c280869a-1bd6-48a8-b4cd-c25eed6b5799}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactUserBillingCompanies</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactUserBillingCompanies]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactUserProjectionNumbers"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{e0d56911-5846-4a17-9143-c0bc997136ce}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactUserProjectionNumbers"
+          DTS:ThreadHint="15">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{db61f7fb-2cd6-4a08-94a8-c1aaef4f59aa}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactUserProjectionNumbers</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactUserProjectionNumbers]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactUserRoles"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{3b4d9bcf-8b42-467d-974d-80a15221034a}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactUserRoles"
+          DTS:ThreadHint="16">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{d0d35ef4-22fc-420c-8aed-0ee70a014851}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactUserRoles</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactUserRoles]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\Load FactUsersContracts"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{00fbaa06-298f-4ea7-bd8a-c48d53fe81f7}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load FactUsersContracts"
+          DTS:ThreadHint="17">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{8eabba1c-619f-442a-978c-f2d19a24f23e}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">FactUsersContracts</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateFactUsersContracts]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Fact\PopulateFactInvoices"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:Disabled="True"
+          DTS:DTSID="{0e937018-a271-4c6c-ba13-7bef077b9dd0}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="PopulateFactInvoices"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="18">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="exec usp_PopulateFactInvoices;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Populate Facts row level security"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{EE5B3AA3-69AE-4C85-AD77-CA99073C9822}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Populate Facts row level security">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Populate Facts row level security\Load Security_FactProjections"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{73a65818-940a-4d7c-9ca3-3fecd0b8b2bd}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load Security_FactProjections"
+          DTS:ThreadHint="0">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{71b6ffc0-afdf-4744-802a-326745b6a8f4}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">Security_FactProjections</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateSecurity_FactProjections]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Facts row level security\Load Security_FactProperties"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{88590580-a7bf-4ef1-87e0-b126b4d761d4}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load Security_FactProperties"
+          DTS:ThreadHint="1">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{9c1f5e46-e123-4899-a7ca-f6d3e112dec3}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">Security_FactProperties</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateSecurity_FactProperties]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Populate Facts row level security\Load Security_FactSalesAreas"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{c263d03b-74ac-4ddc-8609-85bc44df165f}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load Security_FactSalesAreas"
+          DTS:ThreadHint="2">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:DTSID="{bbc2db7d-31e3-42b5-8518-1638849efce0}"
+              DTS:IncludeInDebugDump="2345"
+              DTS:Namespace="User"
+              DTS:ObjectName="v_TableName">
+              <DTS:VariableValue
+                DTS:DataType="8">Security_FactSalesAreas</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:PropertyExpression
+            DTS:Name="Name">"Load " +  @[User::v_TableName]</DTS:PropertyExpression>
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"EXEC [dbo].[usp_Populate" +  @[User::v_TableName] + "]"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+              SQLTask:SqlStatementSource="EXEC [dbo].[usp_PopulateSecurity_FactSalesAreas]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Truncate all tables"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{DEF3245A-9868-4488-A32F-F336895DB8CF}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Truncate all tables"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{E72BAD60-E510-4452-98C5-E841956AC2AC}"
+          SQLTask:SqlStatementSource="EXEC usp_TruncateTable 'dbo', 'Security_FactProjections'&#xA;EXEC usp_TruncateTable 'dbo', 'Security_FactSalesAreas'&#xA;EXEC usp_TruncateTable 'dbo', 'Security_FactProperties'&#xA;EXEC usp_TruncateTable 'dbo', 'Security_DimUser'&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{2DEEFE7A-F290-4444-9AFB-382A7A62DD02}"
+      DTS:From="Package\Truncate all tables"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Populate Dim" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{A5376144-497A-4A22-A625-3EA87AF1F7A5}"
+      DTS:From="Package\Populate Dim"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Populate Fact" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{90D30328-F102-4C5C-872F-35EA090C9748}"
+      DTS:From="Package\Populate Fact"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\Populate Facts row level security" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{1188F35D-88BB-4969-A20E-17E84E94FE34}"
+      DTS:From="Package\Populate Facts row level security"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\Delete Old Data" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="151,42"
+          Id="Package\Delete Old Data\Delete old data"
+          TopLeft="40,36" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="263,130"
+          Size="263,173"
+          Id="Package\Delete Old Data"
+          TopLeft="1043,1424" />
+        <NodeLayout
+          Size="210,43"
+          Id="Package\Populate Dim\Load DimBudget"
+          TopLeft="496.5,295.75" />
+        <NodeLayout
+          Size="210,43"
+          Id="Package\Populate Dim\Load DimClient"
+          TopLeft="271.5,434.75" />
+        <NodeLayout
+          Size="166,42"
+          Id="Package\Populate Dim\Load DimComment"
+          TopLeft="275.5,225" />
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Populate Dim\Load DimContract"
+          TopLeft="34.5,37.5" />
+        <NodeLayout
+          Size="165,42"
+          Id="Package\Populate Dim\Load DimCurrency"
+          TopLeft="691.75,228.75" />
+        <NodeLayout
+          Size="189,42"
+          Id="Package\Populate Dim\Load DimCustomerContact"
+          TopLeft="235,41.5" />
+        <NodeLayout
+          Size="166,42"
+          Id="Package\Populate Dim\Load DimDeal"
+          TopLeft="481.75,228.75" />
+        <NodeLayout
+          Size="189,42"
+          Id="Package\Populate Dim\Load DimDealProperty"
+          TopLeft="680.5,44.75" />
+        <NodeLayout
+          Size="189,42"
+          Id="Package\Populate Dim\Load DimDealRights"
+          TopLeft="488,135.5" />
+        <NodeLayout
+          Size="210,43"
+          Id="Package\Populate Dim\Load DimDelivery"
+          TopLeft="36.5,426.75" />
+        <NodeLayout
+          Size="165,42"
+          Id="Package\Populate Dim\Load DimIncomeType"
+          TopLeft="50.5000000000001,293.5" />
+        <NodeLayout
+          Size="166,42"
+          Id="Package\Populate Dim\Load DimInvoicing"
+          TopLeft="708,133" />
+        <NodeLayout
+          Size="181,42"
+          Id="Package\Populate Dim\Load DimPipelineDeal"
+          TopLeft="748.5,436.75" />
+        <NodeLayout
+          Size="196,42"
+          Id="Package\Populate Dim\Load DimPipelineDealHistory"
+          TopLeft="540,504" />
+        <NodeLayout
+          Size="210,43"
+          Id="Package\Populate Dim\Load DimProjection"
+          TopLeft="39.5,360.75" />
+        <NodeLayout
+          Size="210,43"
+          Id="Package\Populate Dim\Load DimProjectionAnticipated"
+          TopLeft="511.5,361.75" />
+        <NodeLayout
+          Size="210,43"
+          Id="Package\Populate Dim\Load DimProjectionTerritory"
+          TopLeft="269,296.75" />
+        <NodeLayout
+          Size="189,42"
+          Id="Package\Populate Dim\Load DimProperty"
+          TopLeft="450.5,52.25" />
+        <NodeLayout
+          Size="189,42"
+          Id="Package\Populate Dim\Load DimPropertyRights"
+          TopLeft="264.25,129.25" />
+        <NodeLayout
+          Size="209,50"
+          Id="Package\Populate Dim\Load DimPropertyVersion"
+          TopLeft="39.5,502" />
+        <NodeLayout
+          Size="153,42"
+          Id="Package\Populate Dim\Load DimRights"
+          TopLeft="43.5,575" />
+        <NodeLayout
+          Size="210,43"
+          Id="Package\Populate Dim\Load DimRole"
+          TopLeft="513.357151012032,429.055880825742" />
+        <NodeLayout
+          Size="166,42"
+          Id="Package\Populate Dim\Load DimSalesArea"
+          TopLeft="55.5,218.25" />
+        <NodeLayout
+          Size="166,43"
+          Id="Package\Populate Dim\Load DimTerritory"
+          TopLeft="755.5,504" />
+        <NodeLayout
+          Size="189,42"
+          Id="Package\Populate Dim\Load DimUser"
+          TopLeft="39.25,134.75" />
+        <NodeLayout
+          Size="217,42"
+          Id="Package\Populate Dim\Load DimUserBillingCompany"
+          TopLeft="742.5,365.75" />
+        <NodeLayout
+          Size="184,42"
+          Id="Package\Populate Dim\Load DimUserContract"
+          TopLeft="745,295" />
+        <NodeLayout
+          Size="212,42"
+          Id="Package\Populate Dim\Load DimUserProjectionNumber"
+          TopLeft="274.5,500.75" />
+        <NodeLayout
+          Size="210,43"
+          Id="Package\Populate Dim\Load Security_DimUser"
+          TopLeft="276.5,362.75" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="965,644"
+          Size="965,687"
+          Id="Package\Populate Dim"
+          TopLeft="150.388888888889,284.666666666667" />
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Populate Fact\Load FactAllocations"
+          TopLeft="35.5,147" />
+        <NodeLayout
+          Size="234,42"
+          Id="Package\Populate Fact\Load FactBridgeRightsDealRights"
+          TopLeft="32.5,538.494116986417" />
+        <NodeLayout
+          Size="253,42"
+          Id="Package\Populate Fact\Load FactBridgeRightsPropertyRights"
+          TopLeft="294.5,535.494116986417" />
+        <NodeLayout
+          Size="235,42"
+          Id="Package\Populate Fact\Load FactBridgeTerritoriesDealRights"
+          TopLeft="26.5,476.494116986417" />
+        <NodeLayout
+          Size="258,43"
+          Id="Package\Populate Fact\Load FactBridgeTerritoriesPropertyRights"
+          TopLeft="300.5,475.494116986417" />
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Populate Fact\Load FactBudgets"
+          TopLeft="422.5,145" />
+        <NodeLayout
+          Size="227,42"
+          Id="Package\Populate Fact\Load FactClientRepresentations"
+          TopLeft="37.5,211" />
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Populate Fact\Load FactComments"
+          TopLeft="220.5,66.6666666666665" />
+        <NodeLayout
+          Size="235,42"
+          Id="Package\Populate Fact\Load FactDealRightsAllocations"
+          TopLeft="289.5,340.494116986417" />
+        <NodeLayout
+          Size="227,42"
+          Id="Package\Populate Fact\Load FactDeliveries"
+          TopLeft="279.5,217" />
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Populate Fact\Load FactOrderDetails"
+          TopLeft="24.5,72.1666666666667" />
+        <NodeLayout
+          Size="186,42"
+          Id="Package\Populate Fact\Load FactPipelineDeals"
+          TopLeft="47.5,397.494116986417" />
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Populate Fact\Load FactProjections"
+          TopLeft="233,146.833333333333" />
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Populate Fact\Load FactRights"
+          TopLeft="416.333333333333,66.5" />
+        <NodeLayout
+          Size="225,42"
+          Id="Package\Populate Fact\Load FactUserBillingCompanies"
+          TopLeft="39.5,333.494116986417" />
+        <NodeLayout
+          Size="235,42"
+          Id="Package\Populate Fact\Load FactUserProjectionNumbers"
+          TopLeft="264.5,396.494116986417" />
+        <NodeLayout
+          Size="227,42"
+          Id="Package\Populate Fact\Load FactUserRoles"
+          TopLeft="42.6428577753962,271.494116986417" />
+        <NodeLayout
+          Size="227,42"
+          Id="Package\Populate Fact\Load FactUsersContracts"
+          TopLeft="290.5,271.494116986417" />
+        <NodeLayout
+          Size="178,42"
+          Id="Package\Populate Fact\PopulateFactInvoices"
+          TopLeft="5.5,5.5" />
+        <NodeLayout
+          Size="264,42"
+          Id="Package\Populate Fact\Load FactBridgeTerritoriesPipelineDeals"
+          TopLeft="31.5,607.494116986417" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="594,737"
+          Size="594,780"
+          Id="Package\Populate Fact"
+          TopLeft="299.888888888889,1189.47222222222" />
+        <NodeLayout
+          Size="201,42"
+          Id="Package\Populate Facts row level security\Load Security_FactProjections"
+          TopLeft="53.1428572644993,155.835293742282" />
+        <NodeLayout
+          Size="201,42"
+          Id="Package\Populate Facts row level security\Load Security_FactProperties"
+          TopLeft="45,21" />
+        <NodeLayout
+          Size="201,42"
+          Id="Package\Populate Facts row level security\Load Security_FactSalesAreas"
+          TopLeft="51,83" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="314,217"
+          Size="314,260"
+          Id="Package\Populate Facts row level security"
+          TopLeft="1014.33333333333,1111.41470625772" />
+        <NodeLayout
+          Size="165,42"
+          Id="Package\Truncate all tables"
+          TopLeft="514.833333333333,166.222222222222" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="597.333333333333,208.222222222222">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="35.555555555556,76.444444444445"
+              Start="0,0"
+              End="35.555555555556,68.944444444445">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,34.2222222222225" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,34.2222222222225"
+                    Point2="0,38.2222222222225"
+                    Point3="4,38.2222222222225" />
+                  <mssgle:LineSegment
+                    End="31.555555555556,38.2222222222225" />
+                  <mssgle:CubicBezierSegment
+                    Point1="31.555555555556,38.2222222222225"
+                    Point2="35.555555555556,38.2222222222225"
+                    Point3="35.555555555556,42.2222222222225" />
+                  <mssgle:LineSegment
+                    End="35.555555555556,68.944444444445" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="632.888888888889,971.666666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-36,217.805555555553"
+              Start="0,0"
+              End="-36,210.305555555553">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,104.902777777776" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,104.902777777776"
+                    Point2="0,108.902777777776"
+                    Point3="-4,108.902777777776" />
+                  <mssgle:LineSegment
+                    End="-32,108.902777777776" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-32,108.902777777776"
+                    Point2="-36,108.902777777776"
+                    Point3="-36,112.902777777776" />
+                  <mssgle:LineSegment
+                    End="-36,210.305555555553" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="893.888888888889,1579.47222222222">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="120.444444444441,-338.0575159645"
+              Start="0,0"
+              End="112.944444444441,-338.0575159645">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="56.2222222222204,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="56.2222222222204,0"
+                    Point2="60.2222222222204,0"
+                    Point3="60.2222222222204,-4" />
+                  <mssgle:LineSegment
+                    End="60.2222222222204,-334.0575159645" />
+                  <mssgle:CubicBezierSegment
+                    Point1="60.2222222222204,-334.0575159645"
+                    Point2="60.2222222222204,-338.0575159645"
+                    Point3="64.2222222222204,-338.0575159645" />
+                  <mssgle:LineSegment
+                    End="112.944444444441,-338.0575159645" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="1172.91666666666,1371.41470625772">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,52.5852937422819"
+              Start="0,0"
+              End="0,45.0852937422819">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,45.0852937422819" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
